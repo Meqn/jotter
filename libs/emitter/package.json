@@ -1,0 +1,21 @@
+{
+  "name": "@jotter/emitter",
+  "version": "0.1.0",
+  "description": "Simple and modern emitter library.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "event",
+    "emitter",
+    "event-emitter"
+  ],
+  "homepage": "https://github.com/Meqn/jotter",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meqn/jotter.git"
+  },
+  "author": "lmq <mengqing723@gmail.com>",
+  "license": "ISC"
+}
