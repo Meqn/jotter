@@ -281,16 +281,15 @@ class WebSocketConnect {
       const delay = reconnectInterval * (1 + this.reconnectAttempts * reconnectDecay)
 
       this._reconnectTimer = setTimeout(() => {
+        // 尝试重连
+        this.open(true)
         // 触发 reconnect事件
         eventTarget.dispatchEvent(createEvent('reconnect'))
-        
-        this.open(true)
       }, delay > maxReconnectInterval ? maxReconnectInterval : delay)
     } else {
-      // 触发最大连接次数事件
-      eventTarget.dispatchEvent(createEvent('reconnectend'))
-      // 关闭 websocket
+      // 超过最大连接次数限制, 则自动关闭和触发 reconnectend事件
       this.close()
+      eventTarget.dispatchEvent(createEvent('reconnectend'))
     }
   }
   // 重置重连数据
@@ -314,8 +313,6 @@ class WebSocketConnect {
     this._pingTimer = setTimeout(() => {
       this.send(this.options.pingMessage)
     }, this.options.pingInterval)
-    
-    return this
   }
 
   /**
