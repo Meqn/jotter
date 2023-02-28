@@ -6,7 +6,7 @@ function getType(arg) {
     .toLowerCase()
 }
 
-var messageType = ['number', 'boolean', 'array', 'object']
+const invalidMessageType = ['number', 'boolean', 'array', 'object']
 
 function getOptions(options = {}) {
   const defaults = {
@@ -56,19 +56,20 @@ function getOptions(options = {}) {
   return Object.assign(defaults, options)
 }
 
-function createEvent(type) {
+function createEvent(type, data) {
   return new CustomEvent(type, {
+    detail: data,
     bubbles: false, //不冒泡
     cancelable: false //不能取消
   })
 }
 
 class WebSocketConnect {
-  _ws = null  // websocket 实例
+  ws = null  // websocket 实例
   _messageQueue = new Set()   // 保存待发送消息(未连接状态)
   _pingTimer = null  // 心跳检测计时器
   _reconnectTimer = null   // 重连计时器
-  reconnectAttempts = 0   // 重连次数
+  _reconnectAttempts = 0   // 重连次数
 
   // constructor(url: string, protocol: string | string[], options: object)
   // constructor(url: string, options: object)
@@ -83,6 +84,9 @@ class WebSocketConnect {
     }
 
     if (getType(url) === 'object') {
+      if (!url.url) {
+        throw Error('Invalid url')
+      }
       this.options = getOptions(url)
     } else if (getType(protocols) === 'object') {
       protocols.url = url
@@ -132,11 +136,11 @@ class WebSocketConnect {
   }
   //websocket 协议
   get protocol() {
-    return this._ws?.protocol
+    return this.ws?.protocol
   }
   // websocket 状态
   get readyState() {
-    return this._ws?.readyState ?? WebSocket.CONNECTING
+    return this.ws?.readyState ?? WebSocket.CONNECTING
   }
 
   /**
@@ -153,13 +157,13 @@ class WebSocketConnect {
       const eventTarget = this._eventTarget
       
       if(reconnectAttempt) {
-        if (self.reconnectAttempts > self.options.maxReconnectAttempts) {
+        if (self._reconnectAttempts > self.options.maxReconnectAttempts) {
           // 超过重连次数
           return console.error(new Error('Connection failed and maximum limit exceeded!'))
         }
       } else {
         // 正常连接，则重置重连次数
-        self.reconnectAttempts = 0
+        self._reconnectAttempts = 0
       }
       
       /**
@@ -210,6 +214,10 @@ class WebSocketConnect {
 
         const e = createEvent('message')
         e.data = event.data
+        e.origin = event.origin
+        e.lastEventId = event.lastEventId
+        e.source = event.source
+        e.ports = event.ports
         eventTarget.dispatchEvent(e)
       }
 
@@ -238,7 +246,7 @@ class WebSocketConnect {
         eventTarget.dispatchEvent(e)
       }
       
-      this._ws = ws
+      this.ws = ws
     } catch (error) {
       throw error
     }
@@ -249,8 +257,8 @@ class WebSocketConnect {
    * @param {string | ArrayBuffer | Blob | ArrayBufferView} data 发送数据
    */
   send(data) {
-    const ws = this._ws
-    if (messageType.includes(getType(data))) {
+    const ws = this.ws
+    if (invalidMessageType.includes(getType(data))) {
       data = JSON.stringify(data)
     }
     if (ws && ws.readyState === WebSocket.OPEN) {
@@ -276,15 +284,15 @@ class WebSocketConnect {
       maxReconnectInterval
     } = this.options
 
-    if (this.reconnectAttempts++ < maxReconnectAttempts) {
+    if (this._reconnectAttempts++ < maxReconnectAttempts) {
       // 间隔时长
-      const delay = reconnectInterval * (1 + this.reconnectAttempts * reconnectDecay)
+      const delay = reconnectInterval * (1 + this._reconnectAttempts * reconnectDecay)
 
       this._reconnectTimer = setTimeout(() => {
         // 尝试重连
         this.open(true)
         // 触发 reconnect事件
-        eventTarget.dispatchEvent(createEvent('reconnect'))
+        eventTarget.dispatchEvent(createEvent('reconnect', { count: this._reconnectAttempts}))
       }, delay > maxReconnectInterval ? maxReconnectInterval : delay)
     } else {
       // 超过最大连接次数限制, 则自动关闭和触发 reconnectend事件
@@ -298,7 +306,7 @@ class WebSocketConnect {
       clearTimeout(this._reconnectTimer)
       this._reconnectTimer = null
     }
-    this.reconnectAttempts = 0
+    this._reconnectAttempts = 0
   }
 
   /**
@@ -331,14 +339,14 @@ class WebSocketConnect {
       this._pingTimer = null
     }
     
-    if (this._ws) {
+    if (this.ws) {
       if (typeof code !== 'number') {
         code = 1000
         reason = reason ?? code
       }
 
-      this._ws.close(code, reason)
-      this._ws = null
+      this.ws.close(code, reason)
+      this.ws = null
     }
   }
 }
