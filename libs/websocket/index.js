@@ -341,8 +341,8 @@ class WebSocketConnect {
     
     if (this.ws) {
       if (typeof code !== 'number') {
-        code = 1000
         reason = reason ?? code
+        code = 1000
       }
 
       this.ws.close(code, reason)
