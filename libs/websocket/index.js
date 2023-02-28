@@ -13,7 +13,7 @@ function getOptions(options = {}) {
     // 在连接被认为超时之前等待的毫秒数。默认为4秒
     timeout: 4000,
     
-    // 是否自动打开连接, 也可以调用 `open()` 来打开websocket。
+    // 是否在实例化后立即尝试连接。可调用 `ws.open()` 和 `ws.close()` 手动打开或关闭。
     automaticOpen: true,
 
     // 重新连接规则，[boolean, function], 默认不会在 [1000, 1001, 1005] 上重连
