@@ -1,4 +1,24 @@
-const getType = function getType(arg) {
+import {
+  IArguments,
+  IOptions,
+  WsEventListener,
+  WsCloseEvent,
+  WsMessageEvent
+} from './types'
+
+// Options所有属性可选, 除了`url`必选
+type IArgumentsAndUrl = Partial<IArguments> & Pick<IArguments, 'url'>
+type MessageType = string | ArrayBuffer | Blob | ArrayBufferView | DataView
+
+// 无效的 message数据类型
+const invalidMessageType = ['number', 'boolean', 'array', 'object']
+
+/**
+ * 获取参数类型
+ * @param arg 参数
+ * @returns 
+ */
+function getType(arg: any) {
   const typeRegExp = /(?:^\[object\s(.*?)\]$)/
   return Object.prototype.toString
     .call(arg)
@@ -6,57 +26,39 @@ const getType = function getType(arg) {
     .toLowerCase()
 }
 
-const isObject = function isObject(arg) {
-  return getType(arg) === 'object'
+/**
+ * 创建自定义事件
+ * @param type 事件类型
+ * @returns 
+ */
+function createEvent<T>(type: string, data?: any): CustomEvent<T> {
+  return new CustomEvent<T>(type, {
+    detail: data,
+    bubbles: false, //不冒泡
+    cancelable: false //不能取消
+  })
 }
 
-const assign = Object.assign || function assign(target, ...args) {
-  if (isObject(target) && args.length > 0) {
-    args.forEach((arg) => {
-      if (isObject(arg)) {
-        Object.keys(arg).forEach((key) => {
-          target[key] = arg[key]
-        })
-      }
-    })
-  }
-
-  return target
-}
-
-const invalidMessageType = ['number', 'boolean', 'array', 'object']
-
-function getOptions(options = {}) {
+/**
+ * 获取配置项
+ * @param options 选项
+ * @returns 
+ */
+function getOptions(
+  options: Partial<IArguments> = {}
+): IOptions {
   const defaults = {
-    // 在连接被认为超时之前等待的毫秒数。默认为4秒
-    timeout: 4000,
-    
-    // 是否在实例化后立即尝试连接。可调用 `ws.open()` 和 `ws.close()` 手动打开或关闭。
+    // timeout: 4000,
     automaticOpen: true,
-
-    // 重新连接规则，[boolean, function], 默认不会在 [1000, 1001, 1005] 上重连
-    // 返回等待重新连接的结果 shouldReconnect(event, ctx): boolean
     shouldReconnect: true,
-    // 尝试重新连接最大次数, 默认无限次
     maxReconnectAttempts: Infinity,
-    // 延迟重新连接尝试的最大毫秒数。默认值：30000
     reconnectInterval: 1000,
-    //自动重连延迟重连速度, [0 - 1 之间], 默认值 1
     reconnectDecay: 1,
-    // 延迟重新连接尝试的最大毫秒数。接受整数。默认值：30000。
     maxReconnectInterval: 30000,
-
-    // 开启自动发送待发消息
     autoSend: false,
-    // 保存待发送消息最大个数
     maxMessageQueue: Infinity,
-
-    // 启用心跳监测标记 [boolean | string], 若为string则为发送消息
     ping: false,
-    // 发送心跳频率
     pingInterval: 5000,
-
-    // 传输二进制数据的类型 ['blob', 'arraybuffer'], 默认值为'blob'
     binaryType: 'blob'
   }
   
@@ -68,32 +70,37 @@ function getOptions(options = {}) {
   
   // 设置心跳检测的默认发送内容
   if (options.ping) {
-    options.pingMessage = typeof options.ping === 'string' ? options.ping : 'ping'
+    (options as IOptions).pingMessage = typeof options.ping === 'string' ? options.ping : 'ping'
   }
 
-  return Object.assign(defaults, options)
+  return Object.assign({
+    url: undefined,
+    protocols: undefined,
+    pingMessage: undefined
+  }, defaults, options)
 }
 
-function createEvent(type, data) {
-  return new CustomEvent(type, {
-    detail: data,
-    bubbles: false, //不冒泡
-    cancelable: false //不能取消
-  })
-}
+export default class WebSocketConnect{
+  public ws: WebSocket = null  // websocket 实例
+  private _messageQueue = new Set<MessageType>()   // 保存待发送消息(未连接状态)
+  private _pingTimer: any = null  // 心跳检测计时器
+  private _reconnectTimer: any = null   // 重连计时器
+  private _reconnectAttempts: number = 0   // 重连次数
+  private readonly options: IOptions
+  private readonly _eventTarget: HTMLDivElement
+  public addEventListener
+  public removeEventListener
+  public dispatchEvent
 
-class WebSocketConnect {
-  ws = null  // websocket 实例
-  _messageQueue = new Set()   // 保存待发送消息(未连接状态)
-  _pingTimer = null  // 心跳检测计时器
-  _reconnectTimer = null   // 重连计时器
-  _reconnectAttempts = 0   // 重连次数
-
-  // constructor(url: string, protocol: string | string[], options: object)
-  // constructor(url: string, options: object)
-  // constructor(url: object)
-  constructor(url, protocols, options = {}) {
-    if (!'WebSocket' in window) {
+  constructor(url: string, protocols?: string | string[], options?: Partial<IArguments>)
+  constructor(url: string, protocols?: Partial<IArguments>)
+  constructor(url: IArgumentsAndUrl)
+  constructor(
+    url: string | IArgumentsAndUrl,
+    protocols?: string | string[] | Partial<IArguments>,
+    options?: Partial<IArguments>
+  ) {
+    if (!('WebSocket' in window)) {
       throw Error('The environment not support websocket')
     }
 
@@ -102,16 +109,16 @@ class WebSocketConnect {
     }
 
     if (getType(url) === 'object') {
-      if (!url.url) {
+      if (!(url as IArgumentsAndUrl).url) {
         throw Error('Invalid url')
       }
-      this.options = getOptions(url)
+      this.options = getOptions(url as IArgumentsAndUrl)
     } else if (getType(protocols) === 'object') {
-      protocols.url = url
-      this.options = getOptions(protocols)
+      (protocols as Partial<IArguments>).url = url as string
+      this.options = getOptions(protocols as Partial<IArguments>)
     } else {
-      options.url = url
-      options.protocols = protocols || []
+      options.url = url as string
+      (options as Partial<IArguments>).protocols = protocols as (string | string[])
       this.options = getOptions(options)
     }
     
@@ -126,13 +133,13 @@ class WebSocketConnect {
     // 绑定对应的处理事件
     ;['open', 'message', 'error', 'close', 'reconnect', 'reconnectend'].forEach(function(stdEvent) {
       // 创建 websocket事件调用监听器  e.g. `this.onopen = function(event) {}`
-      self['on' + stdEvent] = function(event) {}
+      // (self as any)['on' + stdEvent] = function(event: Event) {}
 
       // 将“on*”属性连接事件处理程序
       // e.g. eventTarget.addEventListener('open', function(event) { self.onopen(event) })
-      eventTarget.addEventListener(stdEvent, function(event) {
-        const handler = self['on' + stdEvent]
-        handler.apply(self, arguments) //已声明事件调用函数
+      eventTarget.addEventListener(stdEvent, function(event: Event) {
+        const handler: WsEventListener = (self as any)['on' + stdEvent]
+        handler.call(self, event) //已声明事件调用函数
       })
     })
 
@@ -161,12 +168,18 @@ class WebSocketConnect {
     return this.ws?.readyState ?? WebSocket.CONNECTING
   }
 
+  public onopen(event: Event) {}
+  public onmessage(event: MessageEvent) {}
+  public onerror(event: ErrorEvent) {}
+  public onclose(event: CloseEvent) {}
+  public onreconnect(event: Event) {}
+  public onreconnectend(event: Event) {}
+
   /**
-   * 创建连接 websocket
-   * @param {boolean} reconnectAttempt 是否重连方式
-   * @returns 
+   * 打开 websocket连接
+   * @param reconnectAttempt 是否为重连
    */
-  open(reconnectAttempt) {
+  public open(reconnectAttempt?: boolean) {
     try {
       const ws = new WebSocket(this.options.url, this.options.protocols)
       ws.binaryType = this.options.binaryType
@@ -187,7 +200,7 @@ class WebSocketConnect {
       /**
        * ws 连接关闭
        */
-      ws.onclose = function(event) {
+      ws.onclose = function(event: CloseEvent) {
         // 开启重连
         const _shouldReconnect = self.options.shouldReconnect
         const isReconnect = typeof _shouldReconnect === 'function'
@@ -199,7 +212,7 @@ class WebSocketConnect {
           self.reconnect(event)
         }
 
-        const e = createEvent('close')
+        const e = createEvent('close') as WsCloseEvent
         e.code = event.code
         e.reason = event.reason
         e.wasClean = event.wasClean
@@ -221,7 +234,7 @@ class WebSocketConnect {
       /**
        * ws 接收消息
        */
-      ws.onmessage = function(event) {
+      ws.onmessage = function(event: MessageEvent) {
         /**
          * 接收消息后, 重新检测心跳 (接收任何消息说明当前连接正常)
          * bufferedAmount === 0 表明所有消息已发送完毕
@@ -230,7 +243,7 @@ class WebSocketConnect {
           self.ping()
         }
 
-        const e = createEvent('message')
+        const e = createEvent('message') as WsMessageEvent
         e.data = event.data
         e.origin = event.origin
         e.lastEventId = event.lastEventId
@@ -242,7 +255,7 @@ class WebSocketConnect {
       /**
        * ws 连接成功
        */
-      ws.onopen = function(event) {
+      ws.onopen = function(event: Event) {
         // 连接成功，重置连接次数
         self._resetReconnect()
         
@@ -269,12 +282,14 @@ class WebSocketConnect {
       throw error
     }
   }
-  
+
   /**
    * 发送消息
-   * @param {string | ArrayBuffer | Blob | ArrayBufferView} data 发送数据
+   * @param data 消息内容哦
    */
-  send(data) {
+  public send(data: MessageType) {
+    if (!data) return
+
     const ws = this.ws
     if (invalidMessageType.includes(getType(data))) {
       data = JSON.stringify(data)
@@ -288,12 +303,12 @@ class WebSocketConnect {
       }
     }
   }
-
+  
   /**
-   * ws重新连接
-   * @param {Event} event 事件
+   * 重新连接 websocket
+   * @param {Event} event 连接失败事件
    */
-  reconnect(event) {
+  public reconnect(event: Event) {
     const eventTarget = this._eventTarget
     const {
       maxReconnectAttempts,
@@ -310,7 +325,7 @@ class WebSocketConnect {
         // 尝试重连
         this.open(true)
         // 触发 reconnect事件
-        eventTarget.dispatchEvent(createEvent('reconnect', { count: this._reconnectAttempts}))
+        eventTarget.dispatchEvent(createEvent('reconnect', { count: this._reconnectAttempts }))
       }, delay > maxReconnectInterval ? maxReconnectInterval : delay)
     } else {
       // 超过最大连接次数限制, 则自动关闭和触发 reconnectend事件
@@ -319,19 +334,19 @@ class WebSocketConnect {
     }
   }
   // 重置重连数据
-  _resetReconnect() {
+  private _resetReconnect() {
     if (this._reconnectTimer) {
       clearTimeout(this._reconnectTimer)
       this._reconnectTimer = null
     }
     this._reconnectAttempts = 0
   }
-
+  
   /**
-   * 监测心跳 keepAlive
+   * 心跳监测 keepAlive
    * @returns
    */
-  ping() {
+  public ping() {
     if (this._pingTimer) {
       clearTimeout(this._pingTimer)
     }
@@ -342,11 +357,11 @@ class WebSocketConnect {
   }
 
   /**
-   * 关闭连接
-   * @param {number} code close状态码
-   * @param {string} reason close原因
+   * 关闭 websocket 连接
+   * @param code close状态码
+   * @param reason close原因
    */
-  close(code, reason) {
+  public close(code?: number | string, reason?: string) {
     if (this._reconnectTimer) {
       clearTimeout(this._reconnectTimer)
       this._reconnectTimer = null
@@ -359,7 +374,7 @@ class WebSocketConnect {
     
     if (this.ws) {
       if (typeof code !== 'number') {
-        reason = reason ?? code
+        reason = reason ?? (code as string)
         code = 1000
       }
 
