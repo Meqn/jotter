@@ -1,8 +1,9 @@
 .DS_Store
 node_modules
 dist
+_docs
 
-.Docs.*
+.note.*
 
 # local env files
 .env.local
