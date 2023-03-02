@@ -1,0 +1,44 @@
+{
+  "name": "@jotter/websocket",
+  "version": "1.0.0",
+  "description": "Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "unpkg": "dist/index.js",
+  "jsdelivr": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "clean": "rimraf -rf ./dist",
+    "build": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs",
+    "doc": "npx typedoc --plugin typedoc-plugin-markdown --out _docs src/types.ts src/index.ts"
+  },
+  "keywords": [
+    "websocket",
+    "ws",
+    "socket",
+    "websocket client",
+    "WebSocketConnect",
+    "reconnecting",
+    "websocket connect",
+    "reconnect websocket",
+    "websocket keep alive"
+  ],
+  "homepage": "https://github.com/Meqn/jotter/tree/main/libs/websocket",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Meqn/jotter.git"
+  },
+  "author": "lmq <mengqing723@gmail.com>",
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.0",
+    "rollup-plugin-dts": "^5.2.0",
+    "rollup-plugin-typescript2": "^0.34.1"
+  },
+  "bugs": {
+    "url": "https://github.com/Meqn/jotter/issues"
+  }
+}

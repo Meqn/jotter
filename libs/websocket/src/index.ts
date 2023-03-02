@@ -74,14 +74,14 @@ function getOptions(
   }
 
   return Object.assign({
-    url: undefined,
-    protocols: undefined,
-    pingMessage: undefined
+    url: '',
+    protocols: '',
+    pingMessage: ''
   }, defaults, options)
 }
 
 export default class WebSocketConnect{
-  public ws: WebSocket = null  // websocket 实例
+  public ws: WebSocket | null = null  // websocket 实例
   private _messageQueue = new Set<MessageType>()   // 保存待发送消息(未连接状态)
   private _pingTimer: any = null  // 心跳检测计时器
   private _reconnectTimer: any = null   // 重连计时器
@@ -117,7 +117,7 @@ export default class WebSocketConnect{
       (protocols as Partial<IArguments>).url = url as string
       this.options = getOptions(protocols as Partial<IArguments>)
     } else {
-      options.url = url as string
+      (options as Partial<IArguments>).url = url as string
       (options as Partial<IArguments>).protocols = protocols as (string | string[])
       this.options = getOptions(options)
     }
@@ -147,7 +147,7 @@ export default class WebSocketConnect{
 
     // 在实例化时是否打开连接
     if (this.options.automaticOpen) {
-      this.open()
+      this.open(false)
     }
   }
 
@@ -285,7 +285,7 @@ export default class WebSocketConnect{
 
   /**
    * 发送消息
-   * @param data 消息内容哦
+   * @param data 消息内容
    */
   public send(data: MessageType) {
     if (!data) return
@@ -308,7 +308,7 @@ export default class WebSocketConnect{
    * 重新连接 websocket
    * @param {Event} event 连接失败事件
    */
-  public reconnect(event: Event) {
+  private reconnect(event: Event) {
     const eventTarget = this._eventTarget
     const {
       maxReconnectAttempts,
