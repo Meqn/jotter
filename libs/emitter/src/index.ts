@@ -1,21 +1,35 @@
+export type EventType = string | symbol
+export interface EventHandler {
+  (...args: any[]): void
+  _?: EventHandler
+}
+export interface EventHandlerObj {
+  context?: any,
+  fn: EventHandler
+}
+export type EventHandlerList = Set<EventHandlerObj>
+export type EventHandlerMap = Map<EventType, EventHandlerList>
+
 export default class EventEmitter {
-  constructor() {
-    this._events = new Map()
-  }
+  private _events: EventHandlerMap
   
+  constructor(events?: EventHandlerMap) {
+    this._events = events || new Map()
+  }
   /**
    * 订阅事件
-   * @param {string} type 事件类型
-   * @param {function} listener 处理函数
-   * @param {any} context 事件执行绑定的上下文
-   * @returns 
+   * @param type 事件类型
+   * @param listener 处理函数
+   * @param context 事件执行绑定的上下文
+   * @returns 返回值
    */
-  on(type, listener, context) {
+  on(type: EventType, listener: EventHandler, context?: any) {
     if (typeof listener !== 'function') {
       throw new TypeError('The listener must be a function')
     }
 
     const _events = this._events
+
     if (!_events.has(type)) {
       _events.set(type, new Set())
     }
@@ -31,15 +45,15 @@ export default class EventEmitter {
 
   /**
    * 取消订阅事件
-   * 如果没有提供回调，它会取消订阅当前所有事件
-   * @param {string} type 事件类型
-   * @param {function} listener 监听函数
+   * 如果没有提供处理函数，它会取消订阅当前所有事件
+   * @param type 事件类型
+   * @param listener 处理函数
    * @returns 
    */
-  off(type, listener) {
+  off(type: EventType, listener?: EventHandler) {
     const _events = this._events
     const listeners = _events.get(type)
-    const liveEvents = new Set()
+    const liveEvents: EventHandlerList = new Set()
 
     if (listeners && listener) {
       for (const typeListener of listeners) {
@@ -55,33 +69,32 @@ export default class EventEmitter {
     
     return this
   }
-  
+
   /**
    * 仅订阅一次事件
-   * @param {string} type 事件类型
-   * @param {function} listener 监听函数
-   * @param {any} context 事件执行绑定的上下文
+   * @param type 事件类型
+   * @param listener 处理函数
+   * @param context 事件执行绑定的上下文
    * @returns 
    */
-  once(type, listener, context) {
+  once(type: EventType, listener: EventHandler, context?: any) {
     const self = this
-    function handler() {
+    function handler(...args: any[]) {
       self.off(type, handler)
-      listener.apply(context, arguments)
+      listener.apply(context, args)
     }
     handler._ = listener
 
     // 不能使用 `handler.bind(this)`绑定函数, 否则 self.off 无法匹配
     return this.on(type, handler, context)
   }
-
   /**
    * 触发事件
-   * @param {string} type 事件名
-   * @param  {array<any>} args 传递给事件订阅的参数
+   * @param type 事件类型
+   * @param args 传递给订阅事件的参数
    * @returns 
    */
-  emit(type, ...args) {
+  emit(type: EventType, ...args: any[]) {
     const listeners = this._events.get(type)
     if (listeners) {
       for (const listener of listeners) {
@@ -91,30 +104,24 @@ export default class EventEmitter {
 
     return this
   }
-  
   /**
    * 清除事件
-   * @param {string | symbol | undefined} type 事件名
+   * @param type 事件类型
    * @returns 
    */
-  clear(type) {
+  clear(type?: EventType) {
     return type ? this._events.delete(type) : this._events.clear()
   }
-
-  has(type) {
-    return this._events.has(type)
-  }
-  
   /**
    * 获取订阅事件
-   * @param {string | symbol | undefined} type 事件名
+   * @param type 事件类型
    * @returns 
    */
-  get(type) {
+  get(type?: EventType) {
     return type ? this._events.get(type) : this._events
   }
-}
 
-export {
-  EventEmitter
+  has(type?: EventType) {
+    return this._events.has(type)
+  }
 }

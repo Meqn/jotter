@@ -19,40 +19,62 @@ import EventEmitter from '@jotter/emitter'
 
 const emitter = new EventEmitter()
 
-function onMessage(data) {
-  console.log(data)
+function handleMessage(arg1, arg2) {
+  // ...
+  console.log('message 1: ', arg1, arg2)
 }
 
-emitter.on('message', onMessage)
+emitter.on('message', handleMessage)
 
-emitter.on('message', function() {
-  console.log('message....')
+emitter.once('message', function(data) {
+  console.log('message 2:', data)
 })
 
-emitter.emit('message', 'hello')
-// hello
-// message....
+emitter.emit('message', 'hello', 'world')
+// message 1:  hello world
+// message 2:  hello
 
-emitter.off('message', onMessage)
+emitter.off('message', handleMessage)
 ```
 
-## Instance Methods
+## API
 
-### on(type, listener[, context])
+**Instance Methods**
 
-### once(type, listener[, context])
+### on(type: string | symbol, listener: Function, context?: any): this;
+Subscribe to an event
+- `type` - the name of the event to subscribe to
+- `listener` - the function to call when event is emitted
+- `context` - (OPTIONAL) - the context to bind the event callback to
 
-### emit((type[, arguments...])
+### once(type: string | symbol, listener: Function, context?: any): this;
+Subscribe to an event only once
+- `type` - the name of the event to subscribe to
+- `listener` - the function to call when event is emitted
+- `context` - (OPTIONAL) - the context to bind the event callback to
 
-### off(type[, listener])
+### emit(type: string | symbol, ...args: any[]): this;
+Trigger a named event
+- `type` - the event name to emit
+- `args` - any number of arguments to pass to the event subscribers
 
-### clear([, type])
+### off(type: string | symbol, listener?: EventHandler): this;
+Unsubscribe from an event type. If no listener are provided, it cancels all listeners on that event type.
+- `type` - the name of the event to unsubscribe from
+- `listener` - the function used when binding to the event
 
-### has(type)
+### clear(type?: string | symbol): boolean | void;
+Unsubscribe from an event or all events.
+- `type` - the name of the event to unsubscribe from
 
-### get([, type])
+### has(type?: string | symbol): boolean;
+Check the subscribed event type has listener.
+- `type` - the name of the event to unsubscribe from
 
+### get(type?: string | symbol): EventHandlerList | EventHandlerMap;
+Get all listeners of the subscribed event type
+- `type` - the name of the event to unsubscribe from
 
 
 ## Thanks
-[tiny-emitter](https://github.com/scottcorgan/tiny-emitter) ,  [pico-emitter](https://github.com/hkk12369/pico-emitter) ,  [emittery](https://github.com/sindresorhus/emittery) , [mitt](https://github.com/developit/mitt)
+[mitt](https://github.com/developit/mitt) ,  [tiny-emitter](https://github.com/scottcorgan/tiny-emitter) ,  [pico-emitter](https://github.com/hkk12369/pico-emitter) ,  [emittery](https://github.com/sindresorhus/emittery)

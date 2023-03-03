@@ -1,21 +1,43 @@
 {
   "name": "@jotter/emitter",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "description": "Simple and modern emitter library.",
-  "main": "index.js",
+  "main": "dist/index.umd.js",
+  "module": "dist/index.esm.js",
+  "unpkg": "dist/index.umd.js",
+  "jsdelivr": "dist/index.umd.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "clean": "rimraf -rf ./dist",
+    "build": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs"
   },
   "keywords": [
     "event",
+    "events",
     "emitter",
-    "event-emitter"
+    "pubsub",
+    "listener",
+    "on",
+    "once",
+    "emit",
+    "trigger",
+    "dispatchEvent",
+    "addEventListener",
+    "event emitter",
+    "event bus"
   ],
-  "homepage": "https://github.com/Meqn/jotter",
+  "homepage": "https://github.com/Meqn/jotter/tree/main/libs/emitter",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Meqn/jotter.git"
   },
   "author": "lmq <mengqing723@gmail.com>",
-  "license": "ISC"
+  "license": "MIT",
+  "devDependencies": {
+    "@rollup/plugin-terser": "^0.4.0",
+    "rollup-plugin-typescript2": "^0.34.1"
+  }
 }
