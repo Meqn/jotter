@@ -1,5 +1,9 @@
 # EventEmitter
 
+[![version](https://img.shields.io/npm/v/@jotter/emitter?style=flat-square)](https://www.npmjs.com/package/@jotter/emitter)
+[![download](https://img.shields.io/npm/dm/@jotter/emitter?style=flat-square)](https://www.npmjs.com/package/@jotter/emitter)
+[![license](https://img.shields.io/npm/l/@jotter/emitter?style=flat-square)](https://github.com/Meqn/jotter/tree/main/libs/emitter)
+
 Simple and modern event emitter library.
 
 
@@ -41,37 +45,58 @@ emitter.off('message', handleMessage)
 
 **Instance Methods**
 
-### on(type: string | symbol, listener: Function, context?: any): this;
+### on
+```typescript
+on(type: string | symbol, listener: Function, context?: any): this;
+```
 Subscribe to an event
 - `type` - the name of the event to subscribe to
 - `listener` - the function to call when event is emitted
 - `context` - (OPTIONAL) - the context to bind the event callback to
 
-### once(type: string | symbol, listener: Function, context?: any): this;
+### once
+```typescript
+once(type: string | symbol, listener: Function, context?: any): this;
+```
 Subscribe to an event only once
 - `type` - the name of the event to subscribe to
 - `listener` - the function to call when event is emitted
 - `context` - (OPTIONAL) - the context to bind the event callback to
 
-### emit(type: string | symbol, ...args: any[]): this;
+### emit
+```typescript
+emit(type: string | symbol, ...args: any[]): this;
+```
 Trigger a named event
 - `type` - the event name to emit
 - `args` - any number of arguments to pass to the event subscribers
 
-### off(type: string | symbol, listener?: EventHandler): this;
+### off
+```typescript
+off(type: string | symbol, listener?: EventHandler): this;
+```
 Unsubscribe from an event type. If no listener are provided, it cancels all listeners on that event type.
 - `type` - the name of the event to unsubscribe from
 - `listener` - the function used when binding to the event
 
-### clear(type?: string | symbol): boolean | void;
+### clear
+```typescript
+clear(type?: string | symbol): boolean | void;
+```
 Unsubscribe from an event or all events.
 - `type` - the name of the event to unsubscribe from
 
-### has(type?: string | symbol): boolean;
+### has
+```typescript
+has(type?: string | symbol): boolean;
+```
 Check the subscribed event type has listener.
 - `type` - the name of the event to unsubscribe from
 
-### get(type?: string | symbol): EventHandlerList | EventHandlerMap;
+### get
+```typescript
+get(type?: string | symbol): EventHandlerList | EventHandlerMap;
+```
 Get all listeners of the subscribed event type
 - `type` - the name of the event to unsubscribe from
 
