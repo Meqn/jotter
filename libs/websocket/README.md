@@ -1,4 +1,9 @@
 # WebSocket
+
+[![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
+[![download](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
+[![license](https://img.shields.io/npm/l/@jotter/websocket?style=flat-square)](https://github.com/Meqn/jotter/tree/main/libs/websocket)
+
 Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
 
 标准且有用的WebSocket包装器（使用标准的`WebSocket API`）。具有心跳检测，异常消息处理和自动重连机制。
@@ -26,7 +31,14 @@ npm install @jotter/websocket
 import WebSocketConnect from '@jotter/websocket'
 
 const socket = new WebSocketConnect('ws://127.0.0.1/ws', {
-  automaticOpen: true
+  // 实例化后立即连接
+  automaticOpen: true,
+  // 异常断开后自动重连
+  shouldReconnect: true,
+  // 自动重连最大次数，超出后便不再重连
+  maxReconnectAttempts: 20,
+  // 开启心跳监测&发送内容
+  ping: 'ping'
 })
 
 socket.onmessage = function(event) {
