@@ -21,13 +21,18 @@ const banner =
 const outputs = [
   {
     name,
-    file: pkg.main,
+    file: pkg.unpkg,
     format: 'umd',
     banner
   },
   {
     file: pkg.module,
     format: 'es',
+    banner
+  },
+  {
+    file: pkg.main,
+    format: 'cjs',
     banner
   }
 ].map(item => {

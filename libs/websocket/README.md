@@ -19,9 +19,16 @@ Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep 
 
 ## Install
 
+**npm**
 ```
 npm install @jotter/websocket
 ```
+**browser**
+```
+https://cdn.jsdelivr.net/npm/@jotter/websocket/dist/index.umd.js
+```
+
+
 
 ## Usage
 
@@ -196,10 +203,10 @@ socket.onmessage = function(event) {
 
 /**
  * socket请求和监听
- * @param {string} type 监听消息类型 或 发送数据
+ * @param {string | any} type 监听消息类型 或 发送数据
  * @param {any} data 发送数据
  * @param {function} listener 消息处理函数
- * @param {object} options 配置项, 支持监听事件处理一次
+ * @param {object} options 配置项, 支持监听事件处理一次 `{ once: true }`
  * @returns 
  */
 // function request(data)
@@ -232,11 +239,14 @@ export {
 具体使用：
 
 ```js
-// 设备实时位置记录
+// 发送设备实时位置消息，并监听返回数据
 const deviceCoord = request('device_coord', { deviceId: 9527 }, function(result) {
   // data = { type: 'device_coord', result: { id: 9527, lng: '32.48547', lat: '12.34849' } }
   const coord = [result.lng, result.lat]
 })
+
+// 仅发送消息
+request({ device: 9527 })
 
 // 移除设备定位监听
 removeListener('device_coord', deviceCoord.listener)
