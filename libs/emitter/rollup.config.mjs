@@ -25,7 +25,7 @@ export default defineConfig({
   output: [
     {
       name,
-      file: pkg.browser,
+      file: pkg.unpkg,
       format: 'umd',
       // exports: 'named',
       banner,

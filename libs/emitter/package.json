@@ -1,19 +1,19 @@
 {
   "name": "@jotter/emitter",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Simple and modern emitter library.",
   "main": "./dist/index.js",
-  "module": "./dist/index.esm.js",
-  "browser": "./dist/index.umd.js",
+  "module": "./dist/index.mjs",
   "unpkg": "./dist/index.umd.js",
   "jsdelivr": "./dist/index.umd.js",
   "types": "./dist/index.d.ts",
   "exports": {
     ".": {
       "require": "./dist/index.js",
-      "import": "./dist/index.esm.js",
+      "import": "./dist/index.mjs",
       "types": "./dist/index.d.ts"
-    }
+    },
+    "./package.json": "./package.json"
   },
   "files": [
     "dist"
