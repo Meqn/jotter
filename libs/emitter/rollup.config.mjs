@@ -25,11 +25,16 @@ export default defineConfig({
   output: [
     {
       name,
-      file: pkg.main,
+      file: pkg.browser,
       format: 'umd',
       // exports: 'named',
       banner,
       plugins: env === 'production' ? [terser()] : []
+    },
+    {
+      file: pkg.main,
+      format: 'cjs',
+      banner
     },
     {
       file: pkg.module,
