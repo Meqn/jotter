@@ -3,18 +3,18 @@ export interface EventHandler {
   (...args: any[]): void
   _?: EventHandler
 }
-export interface EventHandlerObj {
+export interface EventHandlerItem {
   context?: any,
   fn: EventHandler
 }
-export type EventHandlerList = Set<EventHandlerObj>
-export type EventHandlerMap = Map<EventType, EventHandlerList>
+export type EventHandlerList = Set<EventHandlerItem>
+export type EventHandlerMap<Events> = Map<keyof Events, EventHandlerList>
 
-export default class EventEmitter {
-  private _events: EventHandlerMap
+export default class EventEmitter<Events extends Record<EventType, unknown>> {
+  private _events: EventHandlerMap<Events>
   
-  constructor(events?: EventHandlerMap) {
-    this._events = events || new Map()
+  constructor(events?: EventHandlerMap<Events>) {
+    this._events = events || new Map<keyof Events, EventHandlerList>()
   }
   /**
    * 订阅事件
@@ -23,7 +23,7 @@ export default class EventEmitter {
    * @param context 事件执行绑定的上下文
    * @returns 返回值
    */
-  on(type: EventType, listener: EventHandler, context?: any) {
+  on<Key extends keyof Events>(type: Key, listener: EventHandler, context?: any) {
     if (typeof listener !== 'function') {
       throw new TypeError('The listener must be a function')
     }
@@ -50,7 +50,7 @@ export default class EventEmitter {
    * @param listener 处理函数
    * @returns 
    */
-  off(type: EventType, listener?: EventHandler) {
+  off<Key extends keyof Events>(type: Key, listener?: EventHandler) {
     const _events = this._events
     const listeners = _events.get(type)
     const liveEvents: EventHandlerList = new Set()
@@ -77,12 +77,13 @@ export default class EventEmitter {
    * @param context 事件执行绑定的上下文
    * @returns 
    */
-  once(type: EventType, listener: EventHandler, context?: any) {
+  once<Key extends keyof Events>(type: Key, listener: EventHandler, context?: any) {
     const self = this
     function handler(...args: any[]) {
       self.off(type, handler)
       listener.apply(context, args)
     }
+    // 用于取消订阅 off(type, fn)
     handler._ = listener
 
     // 不能使用 `handler.bind(this)`绑定函数, 否则 self.off 无法匹配
@@ -94,7 +95,7 @@ export default class EventEmitter {
    * @param args 传递给订阅事件的参数
    * @returns 
    */
-  emit(type: EventType, ...args: any[]) {
+  emit<Key extends keyof Events>(type: Key, ...args: any[]) {
     const listeners = this._events.get(type)
     if (listeners) {
       for (const listener of listeners) {
@@ -109,7 +110,7 @@ export default class EventEmitter {
    * @param type 事件类型
    * @returns 
    */
-  clear(type?: EventType) {
+  clear<Key extends keyof Events>(type?: Key) {
     return type ? this._events.delete(type) : this._events.clear()
   }
   /**
@@ -117,11 +118,18 @@ export default class EventEmitter {
    * @param type 事件类型
    * @returns 
    */
-  get(type?: EventType) {
+  get<Key extends keyof Events>(type?: Key) {
     return type ? this._events.get(type) : this._events
   }
 
-  has(type?: EventType) {
+  /* size(type?: EventType) {
+    if (type) {
+      return this._events.get(type)?.size || 0
+    }
+    return Array.from(this._events.values()).reduce((a, c) => a + c.size, 0)
+  } */
+
+  has<Key extends keyof Events>(type?: Key) {
     return this._events.has(type)
   }
 }
