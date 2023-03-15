@@ -253,5 +253,4 @@ removeListener('device_coord', deviceCoord.listener)
 ```
 
 ## Todo
-- [ ] 连接超时
 - [ ] 手动开启 `ping()`
