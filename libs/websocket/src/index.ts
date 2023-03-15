@@ -287,7 +287,7 @@ export default class WebSocketConnect{
    * 发送消息
    * @param data 消息内容
    */
-  public send(data: MessageType) {
+  public send(data: any) {
     if (!data) return
 
     const ws = this.ws
