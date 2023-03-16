@@ -41,7 +41,9 @@ const socket = new WebSocketConnect('ws://127.0.0.1/ws', {
   // 实例化后立即连接
   automaticOpen: true,
   // 异常断开后自动重连
-  shouldReconnect: true,
+  shouldReconnect(event) {
+    return ![1000, 1001, 1005].includes(event.code)
+  },
   // 自动重连最大次数，超出后便不再重连
   maxReconnectAttempts: 20,
   // 开启心跳监测&发送内容
@@ -127,7 +129,8 @@ websocket连接协议.
 - Default: `Infinity`
 
 ### ping
-启用心跳监测, 若为`string`则为发送消息内容
+启用心跳监测, 若为`string`则为发送消息内容。  
+可调用`ws.ping()`手动打开或关闭
 - Type: `string | boolean`
 - Default: `false`
 
@@ -174,7 +177,7 @@ websocket 连接所传输二进制数据的类型
 打开 websocket连接
 - `reconnectAttempt` - 是否为重连
 
-### send(data: MessageType): void
+### send(data: any): void;
 发送消息
 - `data` - 消息内容
 
@@ -182,6 +185,20 @@ websocket 连接所传输二进制数据的类型
 关闭 websocket 连接
 - `code` - close状态码
 - `reason` - close原因
+
+### ping(message?: boolean | string | object): void;
+心跳检测 keepAlive 💓  
+在`Options`配置中自动开启或调用`ping()`方法手动开启或关闭.
+- `message` - 是否开启心跳检测 或 心跳检测消息体
+
+```js
+// 关闭
+socket.ping(false)
+// 开启
+socket.ping({ data: 'ping', token: 'xxxxxx' })
+```
+
+
 
 ## Examples
 
@@ -251,6 +268,3 @@ request({ device: 9527 })
 // 移除设备定位监听
 removeListener('device_coord', deviceCoord.listener)
 ```
-
-## Todo
-- [ ] 手动开启 `ping()`
