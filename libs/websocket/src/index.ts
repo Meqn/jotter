@@ -70,7 +70,7 @@ function getOptions(
   
   // 设置心跳检测的默认发送内容
   if (options.ping) {
-    (options as IOptions).pingMessage = typeof options.ping === 'string' ? options.ping : 'ping'
+    (options as IOptions).pingMessage = typeof options.ping !== 'boolean' ? options.ping : 'ping'
   }
 
   return Object.assign({
@@ -117,9 +117,10 @@ export default class WebSocketConnect{
       (protocols as Partial<IArguments>).url = url as string
       this.options = getOptions(protocols as Partial<IArguments>)
     } else {
-      (options as Partial<IArguments>).url = url as string
-      (options as Partial<IArguments>).protocols = protocols as (string | string[])
-      this.options = getOptions(options)
+      this.options = getOptions(Object.assign({}, options, {
+        url: url as string,
+        protocols: protocols as (string | string[])
+      }))
     }
     
     const self = this
@@ -206,7 +207,7 @@ export default class WebSocketConnect{
         const isReconnect = typeof _shouldReconnect === 'function'
           ? _shouldReconnect.call(self, event, self)
           : _shouldReconnect
-            ? [1000, 1001, 1005].includes(event.code)
+            ? !([1000, 1001, 1005].includes(event.code))
             : false
         if (isReconnect) {
           self.reconnect(event)
@@ -344,13 +345,25 @@ export default class WebSocketConnect{
   
   /**
    * 心跳监测 keepAlive
+   * @param message 是否开启心跳监测或心跳监测消息体💓
    * @returns
    */
-  public ping() {
+  public ping(message?: boolean | string | object) {
+    if (message === false) {
+      this.options.ping = false
+      return
+    }
+    if (message) {
+      this.options.ping = true
+      if (typeof message !== 'boolean') {
+        this.options.pingMessage = message
+      }
+    }
+
     if (this._pingTimer) {
       clearTimeout(this._pingTimer)
     }
-
+    
     this._pingTimer = setTimeout(() => {
       this.send(this.options.pingMessage)
     }, this.options.pingInterval)

@@ -63,7 +63,7 @@ export interface IArguments {
    * 启用心跳监测, 若为`string`则为发送消息内容
    * @default false
    */
-  readonly ping: boolean | string
+  ping: boolean | string | object
   /**
    * 发送心跳检测频率, 单位:ms
    * @default 5000
@@ -82,7 +82,7 @@ export interface IOptions extends IArguments {
   /**
    * 发送心跳检测消息内容.
    */
-  pingMessage: string
+  pingMessage: string | object
 }
 
 export type WsEventListener = (event: Event) => void
