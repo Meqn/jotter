@@ -27,18 +27,13 @@ export default class EventEmitter<Events extends Record<EventType, unknown>> {
     if (typeof listener !== 'function') {
       throw new TypeError('The listener must be a function')
     }
-
-    const _events = this._events
-
-    if (!_events.has(type)) {
-      _events.set(type, new Set())
-    }
-
-    const listeners = _events.get(type)
+    
+    const listeners = this._events.get(type) || new Set<EventHandlerItem>()
     listeners.add({
       fn: listener,
       context
     })
+    this._events.set(type, listeners)
 
     return this
   }
@@ -129,7 +124,7 @@ export default class EventEmitter<Events extends Record<EventType, unknown>> {
     return Array.from(this._events.values()).reduce((a, c) => a + c.size, 0)
   } */
 
-  has<Key extends keyof Events>(type?: Key) {
+  has<Key extends keyof Events>(type: Key) {
     return this._events.has(type)
   }
 }
