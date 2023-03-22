@@ -78,7 +78,7 @@ Trigger a named event
 
 ### off
 ```typescript
-off(type: string | symbol, listener?: EventHandler): this;
+off(type: string | symbol, listener?: Function): this;
 ```
 Unsubscribe from an event type. If no listener are provided, it cancels all listeners on that event type.
 - `type` - the name of the event to unsubscribe from
@@ -86,23 +86,30 @@ Unsubscribe from an event type. If no listener are provided, it cancels all list
 
 ### clear
 ```typescript
-clear(type?: string | symbol): boolean | void;
+clear(type?: string | symbol): this;
 ```
 Unsubscribe from an event or all events.
 - `type` - the name of the event to unsubscribe from
 
-### has
-```typescript
-has(type?: string | symbol): boolean;
-```
-Check the subscribed event type has listener.
-- `type` - the name of the event to unsubscribe from
-
 ### get
 ```typescript
-get(type?: string | symbol): EventHandlerList | EventHandlerMap;
+get(type?: string | symbol | '*'): Set<EventHandler> | Map<string | symbol, Set<EventHandler>>;
 ```
 Get all listeners of the subscribed event type
+- `type` - the name of the event to unsubscribe from
+
+### size
+```typescript
+size(type?: string | symbol | '*'): number;
+```
+Get the number of listeners for the specified event type.
+- `type` - The event type to get the number of listeners for.
+
+### has
+```typescript
+has(type: string | symbol): boolean;
+```
+Check the subscribed event type has listener.
 - `type` - the name of the event to unsubscribe from
 
 
