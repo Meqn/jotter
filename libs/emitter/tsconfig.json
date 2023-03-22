@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "outDir": "dist",
-    "target": "ES5",
+    "target": "ES2015",
     "module": "ESNext",
     "declaration": true,
     "downlevelIteration": true, //为`es5/es3`提供兼容
