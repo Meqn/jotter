@@ -19,15 +19,15 @@ export default class EventEmitter<Events extends Record<EventType, unknown>> {
   /**
    * 订阅事件
    * @param type 事件类型
-   * @param listener 处理函数
-   * @param context 事件执行绑定的上下文
+   * @param listener 事件处理器
+   * @param context 事件处理器绑定的上下文
    * @returns 返回值
    */
   on<Key extends keyof Events>(type: Key, listener: EventHandler, context?: any) {
     if (typeof listener !== 'function') {
       throw new TypeError('The listener must be a function')
     }
-    
+
     const listeners = this._events.get(type) || new Set<EventHandlerItem>()
     listeners.add({
       fn: listener,
@@ -42,7 +42,7 @@ export default class EventEmitter<Events extends Record<EventType, unknown>> {
    * 取消订阅事件
    * 如果没有提供处理函数，它会取消订阅当前所有事件
    * @param type 事件类型
-   * @param listener 处理函数
+   * @param listener 事件处理器
    * @returns 
    */
   off<Key extends keyof Events>(type: Key, listener?: EventHandler) {
@@ -68,7 +68,7 @@ export default class EventEmitter<Events extends Record<EventType, unknown>> {
   /**
    * 仅订阅一次事件
    * @param type 事件类型
-   * @param listener 处理函数
+   * @param listener 事件处理器
    * @param context 事件执行绑定的上下文
    * @returns 
    */
@@ -101,30 +101,52 @@ export default class EventEmitter<Events extends Record<EventType, unknown>> {
     return this
   }
   /**
-   * 清除事件
+   * 清除订阅事件
+   * 若未提供事件类型，则清除所有
    * @param type 事件类型
    * @returns 
    */
   clear<Key extends keyof Events>(type?: Key) {
-    return type ? this._events.delete(type) : this._events.clear()
+    type ? this._events.delete(type) : this._events.clear()
+    return this
   }
   /**
    * 获取订阅事件
+   * 1. 若事件类型为`*`, 则返回订阅事件所有类型的处理器
+   * 2. 若事件类型为空，则返回订阅事件Map
    * @param type 事件类型
    * @returns 
    */
-  get<Key extends keyof Events>(type?: Key) {
-    return type ? this._events.get(type) : this._events
-  }
-
-  /* size(type?: EventType) {
+  get<Key extends keyof Events>(type?: Key | '*') {
     if (type) {
-      return this._events.get(type)?.size || 0
+      if (type === '*') {
+        let listeners = new Set<EventHandlerItem>()
+        const values = this._events.values()
+        for(const val of values) {
+          listeners = new Set([...listeners, ...val])
+        }
+        return listeners
+      }
+      return this._events.get(type)
     }
-    return Array.from(this._events.values()).reduce((a, c) => a + c.size, 0)
-  } */
-
-  has<Key extends keyof Events>(type: Key) {
+    return this._events
+  }
+  /**
+   * 获取订阅事件数量
+   * @param type 事件类型
+   * 1. 若事件类型为`*`, 则返回订阅事件所有类型的处理器数量
+   * 2. 若事件类型为空，则返回订阅事件类型数量
+   * @returns 
+   */
+  size<Key extends keyof Events>(type?: Key | '*'): number {
+    return type ? (this.get(type)?.size || 0) : this._events.size
+  }
+  /**
+   * 是否已注册事件
+   * @param type 事件类型
+   * @returns 
+   */
+  has<Key extends keyof Events>(type: Key): boolean {
     return this._events.has(type)
   }
 }
