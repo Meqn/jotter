@@ -1,6 +1,6 @@
 {
   "name": "@jotter/emitter",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Simple and modern emitter library.",
   "main": "./dist/index.js",
   "module": "./dist/index.mjs",
@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "clean": "rimraf -rf ./dist",
-    "build": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs"
+    "build": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs",
+    "test": "jest"
   },
   "keywords": [
     "event",
