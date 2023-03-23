@@ -7,7 +7,8 @@
     "module": "ESNext",
     "declaration": true,
     "downlevelIteration": true, //为`es5/es3`提供兼容
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
   },
   "include": ["src"],
   "exclude": ["node_modules"]
