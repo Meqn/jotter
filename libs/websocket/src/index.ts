@@ -65,7 +65,7 @@ function getOptions(
   // 控制 reconnectDecay 在 [0 - 1] 之间
   const reconnectDecay = options.reconnectDecay
   if (reconnectDecay) {
-    options.reconnectDecay = (typeof reconnectDecay === 'number' && reconnectDecay > 0 && reconnectDecay < 1) ? reconnectDecay : 1
+    options.reconnectDecay = (typeof reconnectDecay === 'number' && reconnectDecay >= 0 && reconnectDecay <= 1) ? reconnectDecay : 1
   }
   
   // 设置心跳检测的默认发送内容
@@ -82,7 +82,7 @@ function getOptions(
 
 export default class WebSocketConnect{
   public ws: WebSocket | null = null  // websocket 实例
-  private _messageQueue = new Set<MessageType>()   // 保存待发送消息(未连接状态)
+  private _messageQueue: Set<MessageType> = new Set()   // 保存待发送消息(未连接状态)
   private _pingTimer: any = null  // 心跳检测计时器
   private _reconnectTimer: any = null   // 重连计时器
   private _reconnectAttempts: number = 0   // 重连次数
@@ -100,7 +100,7 @@ export default class WebSocketConnect{
     protocols?: string | string[] | Partial<IArguments>,
     options?: Partial<IArguments>
   ) {
-    if (!('WebSocket' in window)) {
+    if (window && !('WebSocket' in window)) {
       throw Error('The environment not support websocket')
     }
 
@@ -259,7 +259,7 @@ export default class WebSocketConnect{
       ws.onopen = function(event: Event) {
         // 连接成功，重置连接次数
         self._resetReconnect()
-        
+
         // 处理排队消息(在websocket连接成功之前发送的消息)
         if (self.options.autoSend) {
           for (const message of self._messageQueue) {
