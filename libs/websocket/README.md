@@ -3,6 +3,7 @@
 [![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
 [![download](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
 [![license](https://img.shields.io/npm/l/@jotter/websocket?style=flat-square)](https://github.com/Meqn/jotter/tree/main/libs/websocket)
+![suppert](https://img.shields.io/badge/Support-ES2015-brightgreen?style=flat-square)
 
 Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
 
@@ -46,10 +47,18 @@ const socket = new WebSocketConnect('ws://127.0.0.1/ws', {
   },
   // 自动重连最大次数，超出后便不再重连
   maxReconnectAttempts: 20,
-  // 开启心跳监测&发送内容
-  ping: 'ping'
+  // 默认关闭心跳检测
+  ping: false
 })
 
+// socket.onclose
+socket.onerror = function(err) {
+  console.error(err.message)
+}
+socket.onopen = function(event) {
+  // 手动开启心跳检测
+  socket.send({ data: 'ping', token: 'xxxxxx' })
+}
 socket.onmessage = function(event) {
   // ...
 }
@@ -57,11 +66,6 @@ socket.onmessage = function(event) {
 socket.addEventListener('message', function(event) {
   //
 })
-// socket.onopen
-// socket.onerror
-// socket.onclose
-
-socket.send({ data: 'ping' })
 
 socket.close()
 ```
