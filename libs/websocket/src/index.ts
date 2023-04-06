@@ -140,7 +140,9 @@ export default class WebSocketConnect{
       // e.g. eventTarget.addEventListener('open', function(event) { self.onopen(event) })
       eventTarget.addEventListener(stdEvent, function(event: Event) {
         const handler: WsEventListener = (self as any)['on' + stdEvent]
-        handler.call(self, event) //已声明事件调用函数
+        if (handler) {
+          handler.call(self, event) //已声明事件调用函数
+        }
       })
     })
 
@@ -152,17 +154,44 @@ export default class WebSocketConnect{
     }
   }
 
-  static CONNECTING = WebSocket.CONNECTING
-  static OPEN = WebSocket.OPEN
-  static CLOSING = WebSocket.CLOSING
-  static CLOSED = WebSocket.CLOSED
+  static readonly CONNECTING = WebSocket.CONNECTING
+  static readonly OPEN = WebSocket.OPEN
+  static readonly CLOSING = WebSocket.CLOSING
+  static readonly CLOSED = WebSocket.CLOSED
+  get CONNECTING () {
+    return WebSocketConnect.CONNECTING
+  }
+  get OPEN () {
+    return WebSocketConnect.OPEN
+  }
+  get CLOSING () {
+    return WebSocketConnect.CLOSING
+  }
+  get CLOSED () {
+    return WebSocketConnect.CLOSED
+  }
 
+  get binaryType() {
+    return this.ws.binaryType ?? this.options.binaryType
+  }
+  set binaryType(value: BinaryType) {
+    this.options.binaryType = value
+    if (this.ws) {
+      this.ws.binaryType = value
+    }
+  }
+  get bufferedAmount() {
+    return this.ws?.bufferedAmount ?? 0
+  }
+  get extensions() {
+    return this.ws?.extensions ?? ''
+  }
   get url() {
-    return this.options.url
+    return this.ws?.url ?? ''
   }
   //websocket 协议
   get protocol() {
-    return this.ws?.protocol
+    return this.ws?.protocol ?? ''
   }
   // websocket 状态
   get readyState() {
@@ -330,7 +359,7 @@ export default class WebSocketConnect{
       }, delay > maxReconnectInterval ? maxReconnectInterval : delay)
     } else {
       // 超过最大连接次数限制, 则自动关闭和触发 reconnectend事件
-      this.close()
+      this.close('Exceeded maximum number of connections')
       eventTarget.dispatchEvent(createEvent('reconnectend'))
     }
   }
