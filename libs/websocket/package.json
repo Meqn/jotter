@@ -20,8 +20,10 @@
   ],
   "scripts": {
     "clean": "rimraf -rf ./dist",
+    "test": "jest --coverage",
     "build": "pnpm run clean && NODE_ENV=production rollup -c rollup.config.mjs",
-    "doc": "npx typedoc --plugin typedoc-plugin-markdown --out _docs src/types.ts src/index.ts"
+    "doc": "npx typedoc --plugin typedoc-plugin-markdown --out _docs src/types.ts src/index.ts",
+    "server": "node ./src/server.js"
   },
   "keywords": [
     "websocket",
@@ -44,7 +46,8 @@
   "devDependencies": {
     "@rollup/plugin-terser": "^0.4.0",
     "rollup-plugin-dts": "^5.2.0",
-    "rollup-plugin-typescript2": "^0.34.1"
+    "rollup-plugin-typescript2": "^0.34.1",
+    "ws": "^7.5.9"
   },
   "bugs": {
     "url": "https://github.com/Meqn/jotter/issues"

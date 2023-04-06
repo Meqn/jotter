@@ -5,9 +5,11 @@
     "outDir": "dist",
     "target": "ES2015",
     "module": "ESNext",
+    "lib": ["es6", "DOM"],
+    "types": ["node", "jest"],
     "strict": true,
-    "downlevelIteration": true
+    "downlevelIteration": true,
+    "esModuleInterop": true
   },
-  "include": ["src"],
   "exclude": ["node_modules"]
 }
