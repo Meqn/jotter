@@ -172,7 +172,7 @@ export default class WebSocketConnect{
   }
 
   get binaryType() {
-    return this.ws.binaryType ?? this.options.binaryType
+    return this.ws?.binaryType ?? this.options.binaryType
   }
   set binaryType(value: BinaryType) {
     this.options.binaryType = value
