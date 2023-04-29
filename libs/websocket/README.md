@@ -1,6 +1,6 @@
 # WebSocket
 
-[ [English](./README.md) | [中文](./README.zh_CN.md) ]
+[ [English](./README.md) | [中文](https://github.com/Meqn/jotter/blob/main/libs/websocket/README.zh_CN.md) ]
 
 [![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
 [![download](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
