@@ -6,6 +6,7 @@
 
 Simple and modern event emitter library.
 
+一个功能丰富的事件订阅/发布库，方便您在应用程序中实现事件的订阅、发布和取消订阅。
 
 
 ## Install
