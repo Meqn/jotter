@@ -14,7 +14,7 @@ Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep 
 ## Feature
 * 🕰 Has the same API and call method as `WebSocket`;
 * ⚙️ Fully configurable;
-* 🧬 Automatically reconnects when disconnected in exceptional cases, and you can customize the reconnection rules;
+* 🧬 Automatic reconnection in case of abnormal disconnection, with customizable reconnection rules;
 * 📮 Message buffer (accumulated messages are sent when the connection is successful);
 * 💗 Built-in heartbeat detection method, always in a keep-alive state.
 
