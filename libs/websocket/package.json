@@ -44,9 +44,6 @@
   "author": "lmq <mengqing723@gmail.com>",
   "license": "MIT",
   "devDependencies": {
-    "@rollup/plugin-terser": "^0.4.0",
-    "rollup-plugin-dts": "^5.2.0",
-    "rollup-plugin-typescript2": "^0.34.1",
     "ws": "^7.5.9"
   },
   "bugs": {
