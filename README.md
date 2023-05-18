@@ -1,6 +1,6 @@
 # Jotter
 
-记录工作中常用的前端库 (造轮子)。简洁、轻量、通用、无依赖。
+记录工作中常用的前端库 (造轮子)。简洁通用、轻量无依赖。
 
 > 无聊、学习、分享、乐趣。
 
@@ -20,16 +20,14 @@
 
 
 ### @jotter/emitter
-
-Simple and modern event emitter library.  
+> Simple and modern event emitter library.  
 
 一个功能丰富的事件订阅/发布库，方便您在应用程序中实现事件的订阅、发布和取消订阅。
 
 
 
 ### @jotter/websocket
-
-Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
+> Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
 
 标准且有用的WebSocket包装器（使用标准的`WebSocket API`）。具有心跳检测，异常消息处理和自动重连机制。
 
