@@ -1,0 +1,45 @@
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import { defineConfig } from 'rollup'
+import typescript from 'rollup-plugin-typescript2'
+import terser from '@rollup/plugin-terser'
+
+import pkg from './package.json' assert { type: 'json'}
+
+const name = 'dateFormat'
+const env = process.env.NODE_ENV
+const __dirname = path.dirname(fileURLToPath(import.meta.url))
+
+const banner =
+  '/*!\n' +
+  ` * ${pkg.name} v${pkg.version}\n` +
+  ` * (c) ${new Date().getFullYear()} Mervin<mengqing723@gmail.com>\n` +
+  ' * Released under the MIT License.\n' +
+  ' */'
+
+export default defineConfig({
+  input: 'src/index.ts',
+  plugins: [
+    typescript()
+  ],
+  output: [
+    {
+      name,
+      file: pkg.unpkg,
+      format: 'umd',
+      // exports: 'named',
+      banner,
+      plugins: env === 'production' ? [terser()] : []
+    },
+    {
+      file: pkg.main,
+      format: 'cjs',
+      banner
+    },
+    {
+      file: pkg.module,
+      format: 'es',
+      banner
+    }
+  ]
+})
