@@ -278,3 +278,10 @@ request({ device: 9527 })
 // Remove device location listener
 removeListener('device_coord', deviceCoord.listener)
 ```
+
+
+
+## refs
+- [pladaria/reconnecting-websocket](https://github.com/pladaria/reconnecting-websocket/)
+- [joewalnes/reconnecting-websocket](https://github.com/joewalnes/reconnecting-websocket)
+- [lukeed/sockette](https://github.com/lukeed/sockette/)
