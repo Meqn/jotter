@@ -50,14 +50,17 @@ function _formatNormalize(formatter: IFormatter): FormatterFuc {
  * @returns 
  */
 export default function dateFormat(
-  date: string | Date,
+  date: Date | string | number,
   formatter: IFormatter = 'datetime',
   isPad: boolean = true
 ) {
   try {
     if (!date) return ''
-
-    date = date instanceof Date ? date : new Date(date)
+    if (typeof date === 'string') {
+      date = new Date(date.replace(/-/g, '/'))
+    } else if (typeof date === 'number') {
+      date = new Date(date)
+    }
     const week = date.getDay()
     const dateInfo: IDateInfo = {
       'yyyy': date.getFullYear(),
