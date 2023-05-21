@@ -1,5 +1,5 @@
 {
-  "name": "dateformat",
+  "name": "@jotter/dateformat",
   "version": "1.0.0",
   "description": "",
   "main": "./dist/index.js",
@@ -20,7 +20,8 @@
   ],
   "scripts": {
     "clean": "rimraf -rf ./dist",
-    "build": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs"
+    "build": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs",
+    "test": "jest"
   },
   "keywords": [],
   "author": "",
