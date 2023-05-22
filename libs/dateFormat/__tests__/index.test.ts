@@ -5,8 +5,11 @@ import dateFormat from '../src/index'
     date = new Date('2023-05-19 15:25:36')
   })
 
-  it('如果日期无效，应该抛出错误', () => {
+  /* it('如果日期无效，应该抛出错误', () => {
     expect(() => {dateFormat('invalid date')}).toThrow('date is invalid!')
+  }) */
+  it('如果日期无效，则返回空字符串', () => {
+    expect(dateFormat('invalid date')).toEqual('')
   })
 
   it('验证日期为string类型', () => {
@@ -31,22 +34,14 @@ import dateFormat from '../src/index'
 
   it('自定义函数格式化日期', () => {
     expect(dateFormat(date, (dateInfo) => {
-      return `今年是${dateInfo.yyyy}年`
+      return `今年是${dateInfo.YYYY}年`
     })).toEqual('今年是2023年')
   })
 
   it('自定义格式化日期', () => {
-    expect(dateFormat(date, 'yyyy/MM/dd')).toEqual('2023/05/19')
-    expect(dateFormat(date, 'yyyy年MM月dd日')).toEqual('2023年05月19日')
-  })
-  
-  it('如果isPad为真, 则用0填充日期位数', () => {
-    date = new Date('2023-01-01 1:2:3')
-    expect(dateFormat(date, 'yyyy/MM/dd HH:mm:ss', true)).toEqual('2023/01/01 01:02:03')
-  })
-
-  it('如果isPad为假, 则不填充日期位数', () => {
-    date = new Date('2023-01-01 1:2:3')
-    expect(dateFormat(date, 'yyyy/MM/dd HH:mm:ss', false)).toEqual('2023/1/1 1:2:3')
+    expect(dateFormat(date, 'YYYY/MM/DD')).toEqual('2023/05/19')
+    expect(dateFormat(date, 'YYYY年MM月DD日')).toEqual('2023年05月19日')
+    expect(dateFormat(date, 'YY-M-D ddd')).toEqual('23-5-19 Fri')
   })
  })
+ 
