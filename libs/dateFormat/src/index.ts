@@ -1,19 +1,42 @@
-type WeeklyDay = '日' | '一' | '二' | '三' | '四' | '五' | '六'
 interface IDateInfo {
-  yyyy: number | string
-  MM: number | string
-  dd: number | string
-  HH: number | string
-  mm: number | string
-  ss: number | string
-  ms: number | string
-  e: number | string
-  E: WeeklyDay | string
-  date?: Date
+  [key: string]: string | number | Date
 }
-type DateInfoValueTypes = string | number | Date | undefined
 type FormatterFuc = (date: IDateInfo, rawDate?: IDateInfo) => string
 type IFormatter = 'date' | 'time' | 'datetime' | string | FormatterFuc
+
+const WEEKS = {
+  dd: ['日', '一', '二', '三', '四', '五', '六'],
+  ddd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
+  dddd: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+}
+
+const REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,2}|Qo|Q{1,2}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A{1,2}|m{1,2}|s{1,2}|S{1,3}|Z{1,2}/g
+
+/**
+ * 补位指定长度的字符串
+ * @param value 日期
+ * @param length 长度
+ * @param pad 补位
+ * @returns 
+ */
+function padStart(value: string | number, length: number, pad: any): string {
+  const s = String(value)
+  if (!s || s.length >= length) return s
+  return `${Array((length + 1) - s.length).join(pad)}${value}`
+}
+
+/**
+ * 时区字符串
+ * @param date 日期
+ * @returns
+ */
+const padZoneStr = (date: Date) => {
+  const negMinutes = -(-Math.round(date.getTimezoneOffset() / 15) * 15)
+  const minutes = Math.abs(negMinutes)
+  const hourOffset = Math.floor(minutes / 60)
+  const minuteOffset = minutes % 60
+  return `${negMinutes <= 0 ? '+' : '-'}${padStart(hourOffset, 2, '0')}:${padStart(minuteOffset, 2, '0')}`
+}
 
 /**
  * 将时间格式化类型归一
@@ -28,66 +51,96 @@ function _formatNormalize(formatter: IFormatter): FormatterFuc {
   }
 
   if (formatter === 'datetime') {
-    formatter = 'yyyy-MM-dd HH:mm:ss'
+    formatter = 'YYYY-MM-DD HH:mm:ss'
   } else if (formatter === 'date') {
-    formatter = 'yyyy-MM-dd'
+    formatter = 'YYYY-MM-DD'
   } else if (formatter === 'time') {
     formatter = 'HH:mm:ss'
   }
-  return function (date: IDateInfo) {
-    return (formatter as string).replace(/(yyyy|MM|dd|HH|mm|ss|ms|E)+/g, (value): string => {
-      return date[value as keyof IDateInfo] as string
+  return function (matches: IDateInfo) {
+    return (formatter as string).replace(REGEX_FORMAT, (match, $1): string => {
+      return $1 || matches[match]
     })
   }
 }
 
 /**
  * 日期/时间 格式化函数
- * @type [['年', 'yyyyy'], ['月', 'MM'], ['日', 'dd'], ['时', 'HH'], ['分', 'mm'], ['秒', 'ss'], ['毫秒', 'ms'], ['周', 'E']]
  * @param {string | Date} date 日期/时间
  * @param {string | function | 'date' | 'time' | 'datetime'} formatter 格式化方式
- * @param {boolean} isPad 是否补零
  * @returns 
  */
 export default function dateFormat(
   date: Date | string | number,
-  formatter: IFormatter = 'datetime',
-  isPad: boolean = true
+  formatter: IFormatter = 'datetime'
 ) {
   try {
-    if (!date) return ''
+    if (!date) throw new Error('date is invalid!')
     if (typeof date === 'string') {
       date = new Date(date.replace(/-/g, '/'))
     } else if (typeof date === 'number') {
       date = new Date(date)
     }
-    const week = date.getDay()
-    const dateInfo: IDateInfo = {
-      'yyyy': date.getFullYear(),
-      'MM': date.getMonth() + 1,
-      'dd': date.getDate(),
-      'HH': date.getHours(),
-      'mm': date.getMinutes(),
-      'ss': date.getSeconds(),
-      'ms': date.getMilliseconds(),
-      'e': week,
-      'E': ['日', '一', '二', '三', '四', '五', '六'][week] as WeeklyDay
-    }
-    let rawDateInfo: IDateInfo | undefined
-    if (isPad) {
-      rawDateInfo = Object.keys(dateInfo).reduce<IDateInfo>((obj, key) => {
-        const value = dateInfo[key as keyof IDateInfo] as DateInfoValueTypes
-        (obj[key as keyof IDateInfo] as DateInfoValueTypes) = value
-        const length = key === 'ms' ? 3 : key.length
-        dateInfo[key as keyof Omit<IDateInfo, 'date'>] = value.toString().padStart(length, '0')
-        return obj
-      }, {} as IDateInfo)
-      rawDateInfo.date = date
-    }
-    dateInfo.date = date
 
-    return _formatNormalize(formatter)(dateInfo, rawDateInfo || dateInfo)
-  } catch (error) {
-    throw new Error('date is invalid!')
+    if (Object.prototype.toString.call(date) === '[object Date]' && isNaN(date.getTime())) {
+      throw new Error('date is invalid!')
+    }
+    
+    const year = date.getFullYear()
+    const month = date.getMonth() + 1
+    const day = date.getDate()
+    const hour = date.getHours()
+    const minute = date.getMinutes()
+    const second = date.getSeconds()
+    const millisecond = date.getMilliseconds()
+    const week = date.getDay()
+    const isAm = hour > 12 ? false : true
+    const quarter = Math.ceil((month)/3)
+
+    const matches: IDateInfo = {
+      date,
+      year,
+      month,
+      day,
+      hour,
+      minute,
+      second,
+      millisecond,
+      week,
+      YY: String(year).slice(-2),
+      YYYY: year,
+      M: month,
+      MM: padStart(month, 2, '0'),
+      D: day,
+      DD: padStart(day, 2, '0'),
+      d: week,
+      dd: WEEKS.dd[week],
+      ddd: WEEKS.ddd[week],
+      dddd: WEEKS.dddd[week],
+      H: hour,
+      HH: padStart(hour, 2, '0'),
+      h: hour%12,
+      hh: padStart(hour%12, 2, '0'),
+      a: isAm ? 'am' : 'pm',
+      A: isAm ? 'AM' : 'PM',
+      AA: isAm ? '上午' : '下午',
+      m: minute,
+      mm: padStart(minute, 2, '0'),
+      s: second,
+      ss: padStart(second, 2, '0'),
+      S: String(millisecond).slice(-1),
+      SS: String(millisecond).slice(-2),
+      SSS: String(millisecond).slice(-3),
+      Q: quarter,
+      Qo: 'Q' + quarter,
+      QQ: ['一', '二', '三', '四'][quarter - 1],
+      Z: padZoneStr(date),
+      ZZ: padZoneStr(date).replace(':', '')
+    }
+    
+    return _formatNormalize(formatter)(matches)
+  } catch (e) {
+    console.error((<Error>e).message)
+    return ''
   }
 }
