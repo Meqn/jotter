@@ -1,16 +1,15 @@
 interface IDateInfo {
   [key: string]: string | number | Date
 }
-type FormatterFuc = (date: IDateInfo, rawDate?: IDateInfo) => string
+type FormatterFuc = (dateMap: IDateInfo, dateObj?: IDateInfo) => string
 type IFormatter = 'date' | 'time' | 'datetime' | string | FormatterFuc
 
 const WEEKS = {
-  dd: ['日', '一', '二', '三', '四', '五', '六'],
-  ddd: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
-  dddd: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday']
+  en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+  cn: ['日', '一', '二', '三', '四', '五', '六'],
 }
 
-const REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,2}|Qo|Q{1,2}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A{1,2}|m{1,2}|s{1,2}|S{1,3}|Z{1,2}/g
+const REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,2}|D{1,2}|Q{1,2}|d{1,4}|E{1,3}|H{1,2}|h{1,2}|a|A{1,2}|m{1,2}|s{1,2}|S{1,3}|Z{1,2}/g
 
 /**
  * 补位指定长度的字符串
@@ -114,9 +113,12 @@ export default function dateFormat(
       D: day,
       DD: padStart(day, 2, '0'),
       d: week,
-      dd: WEEKS.dd[week],
-      ddd: WEEKS.ddd[week],
-      dddd: WEEKS.dddd[week],
+      dd: WEEKS.en[week].slice(0, 2),
+      ddd: WEEKS.en[week].slice(0, 3),
+      dddd: WEEKS.en[week],
+      E: WEEKS.cn[week],
+      EE: '周' + WEEKS.cn[week],
+      EEE: '星期' + WEEKS.cn[week],
       H: hour,
       HH: padStart(hour, 2, '0'),
       h: hour%12,
