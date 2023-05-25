@@ -1,15 +1,7 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../build/tsconfig.simple.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
-    "target": "ES5",
-    "module": "ESNext",
-    "declaration": true,
-    "downlevelIteration": true, //为`es5/es3`提供兼容
-    "esModuleInterop": true,
-    "types": ["node", "jest"],
+    "target": "ES5"
   },
-  "include": ["src"],
-  "exclude": ["node_modules"]
+  "include": ["src"]
 }
