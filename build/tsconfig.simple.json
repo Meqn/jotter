@@ -1,0 +1,17 @@
+{
+  "extends": "../tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "outDir": "dist",
+    "target": "ESNext",
+    "module": "ESNext",
+    "declaration": true,
+    // "declarationMap": true,
+    "downlevelIteration": true, //为`es5/es3`提供兼容
+    "esModuleInterop": true,
+    "types": ["node", "jest"],
+    "strict": true
+  },
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}
