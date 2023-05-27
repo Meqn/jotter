@@ -1,12 +1,13 @@
 # Jotter
+Document some lightweight front-end libraries (wheel building). The main features is "simple, universal, no dependence".
 
-记录工作中常用的前端库 (造轮子)。简洁通用、轻量无依赖。
+记录一些轻量级的前端库 (造轮子)。👉 主打的就是一个 "简洁、通用、无依赖"。
 
-> 无聊、学习、分享、乐趣。
+全部来自工作中开发的源代码，非常适合简单的项目。
 
-
-
----
+什么会存在这个库呢？
+> 😄 高情商：分享、学习、乐趣。  
+> 😨 低情商：无聊。为了挤压游戏时间，因为”不仅菜，还爱玩“。
 
 
 
@@ -14,21 +15,19 @@
 
 | Package                                                      | Status                                                       |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
-| [@jotter/emitter](https://github.com/Meqn/jotter/tree/main/libs/emitter) | [![version](https://img.shields.io/npm/v/@jotter/emitter?style=flat-square)](https://www.npmjs.com/package/@jotter/emitter) [![download](https://img.shields.io/npm/dm/@jotter/emitter?style=flat-square)](https://www.npmjs.com/package/@jotter/emitter) |
-| [@jotter/websocket](https://github.com/Meqn/jotter/tree/main/libs/websocket) | [![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket) [![download](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket) |
+| [@jotter/emitter](https://github.com/Meqn/jotter/tree/main/libs/emitter) | Simple and modern event emitter library. |
+| [@jotter/websocket](https://github.com/Meqn/jotter/tree/main/libs/websocket) | Modern and useful WebSocket wrapper, with standard WebSocket API. |
+| [@jotter/drag](https://github.com/Meqn/jotter/tree/main/libs/drag) | Lightweight "drag-and-drop" library of draggable elements within a specified range. |
+| [@jotter/dateformat](https://github.com/Meqn/jotter/tree/main/libs/dateFormat) | a date/time formatting function. |
 
 
 
 ### @jotter/emitter
-> Simple and modern event emitter library.  
-
 一个功能丰富的事件订阅/发布库，方便您在应用程序中实现事件的订阅、发布和取消订阅。
 
 
 
 ### @jotter/websocket
-> Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
-
 标准且有用的WebSocket包装器（使用标准的`WebSocket API`）。具有心跳检测，异常消息处理和自动重连机制。
 
 **Feature :**
