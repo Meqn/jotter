@@ -17,7 +17,7 @@ npm install @jotter/emitter
 ```
 **browser**
 ```
-https://cdn.jsdelivr.net/npm/@jotter/emitter/dist/index.umd.js
+https://cdn.jsdelivr.net/npm/@jotter/emitter/dist/index.global.js
 ```
 
 
