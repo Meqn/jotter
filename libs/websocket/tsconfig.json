@@ -1,15 +1,9 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../build/tsconfig.simple.json",
   "compilerOptions": {
-    "baseUrl": ".",
-    "outDir": "dist",
     "target": "ES2015",
-    "module": "ESNext",
     "lib": ["ESNext", "DOM"],
-    "types": ["node", "jest"],
-    "strict": true,
-    "downlevelIteration": true,
-    "esModuleInterop": true
+    "declaration": false,
   },
-  "exclude": ["node_modules"]
+  "include": ["src"]
 }
