@@ -28,7 +28,7 @@ npm install @jotter/websocket
 ```
 **browser**
 ```
-https://cdn.jsdelivr.net/npm/@jotter/websocket/dist/index.umd.js
+https://cdn.jsdelivr.net/npm/@jotter/websocket/dist/index.global.js
 ```
 
 
