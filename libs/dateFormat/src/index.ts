@@ -4,9 +4,12 @@ interface IDateInfo {
 type FormatterFuc = (dateMap: IDateInfo, dateObj?: IDateInfo) => string
 type IFormatter = 'date' | 'time' | 'datetime' | string | FormatterFuc
 
+const MONTHS = {
+  en: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
+  zh: ['一', '二', '三', '四', '五', '六', '七', '八', '九', '十', '十一', '十二'],}
 const WEEKS = {
   en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
-  cn: ['日', '一', '二', '三', '四', '五', '六'],
+  zh: ['日', '一', '二', '三', '四', '五', '六'],
 }
 
 const REGEX_FORMAT = /\[([^\]]+)]|Y{1,4}|M{1,2}|D{1,2}|Q{1,2}|d{1,4}|E{1,3}|H{1,2}|h{1,2}|a|A{1,2}|m{1,2}|s{1,2}|S{1,3}|Z{1,2}/g
@@ -67,11 +70,13 @@ function _formatNormalize(formatter: IFormatter): FormatterFuc {
  * 日期/时间 格式化函数
  * @param {string | Date} date 日期/时间
  * @param {string | function | 'date' | 'time' | 'datetime'} formatter 格式化方式
+ * @param {'zh' | 'en'} locale 语言
  * @returns 
  */
 export default function dateFormat(
   date: Date | string | number,
-  formatter: IFormatter = 'datetime'
+  formatter: IFormatter = 'datetime',
+  locale: 'zh' | 'en' = 'zh'
 ) {
   try {
     if (!date) throw new Error('date is invalid!')
@@ -84,6 +89,8 @@ export default function dateFormat(
     if (Object.prototype.toString.call(date) === '[object Date]' && isNaN(date.getTime())) {
       throw new Error('date is invalid!')
     }
+
+    locale = (locale && locale.indexOf('en') === 0) ? 'en' : 'zh'
     
     const year = date.getFullYear()
     const month = date.getMonth() + 1
@@ -95,6 +102,8 @@ export default function dateFormat(
     const week = date.getDay()
     const isAm = hour > 12 ? false : true
     const quarter = Math.ceil((month)/3)
+    const cWeek = WEEKS[locale][week]
+    const cMonth = MONTHS[locale][month - 1]
 
     const matches: IDateInfo = {
       date,
@@ -112,13 +121,12 @@ export default function dateFormat(
       MM: padStart(month, 2, '0'),
       D: day,
       DD: padStart(day, 2, '0'),
+      DDD: locale === 'en' ? cMonth.slice(0, 3) : cMonth,
+      DDDD: locale === 'en' ? cMonth : cMonth + '月',
       d: week,
-      dd: WEEKS.en[week].slice(0, 2),
-      ddd: WEEKS.en[week].slice(0, 3),
-      dddd: WEEKS.en[week],
-      E: WEEKS.cn[week],
-      EE: '周' + WEEKS.cn[week],
-      EEE: '星期' + WEEKS.cn[week],
+      dd: locale === 'en' ? cWeek.slice(0, 2) : cWeek,
+      ddd: locale === 'en' ? cWeek.slice(0, 3) : '周' + cWeek,
+      dddd: locale === 'en' ? cWeek : '星期' + cWeek,
       H: hour,
       HH: padStart(hour, 2, '0'),
       h: hour%12,
