@@ -43,7 +43,7 @@ const padZoneStr = (date: Date) => {
 /**
  * 将时间格式化类型归一
  * @param {function | string} formatter 时间格式化
- * @returns funtion
+ * @returns function
  */
 function _formatNormalize(formatter: IFormatter): FormatterFuc {
   if (typeof formatter === 'function') return formatter
@@ -119,10 +119,10 @@ export default function dateFormat(
       YYYY: year,
       M: month,
       MM: padStart(month, 2, '0'),
+      MMM: locale === 'en' ? cMonth.slice(0, 3) : cMonth,
+      MMMM: locale === 'en' ? cMonth : cMonth + '月',
       D: day,
       DD: padStart(day, 2, '0'),
-      DDD: locale === 'en' ? cMonth.slice(0, 3) : cMonth,
-      DDDD: locale === 'en' ? cMonth : cMonth + '月',
       d: week,
       dd: locale === 'en' ? cWeek.slice(0, 2) : cWeek,
       ddd: locale === 'en' ? cWeek.slice(0, 3) : '周' + cWeek,
