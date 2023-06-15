@@ -1,13 +1,11 @@
 import dateFormat from '../src/index'
- describe('dateFormat', () => {
+
+describe('dateFormat', () => {
   let date: Date
   beforeEach(() => {
     date = new Date('2023-05-19 15:25:36')
   })
 
-  /* it('如果日期无效，应该抛出错误', () => {
-    expect(() => {dateFormat('invalid date')}).toThrow('date is invalid!')
-  }) */
   it('如果日期无效，则返回空字符串', () => {
     expect(dateFormat('invalid date')).toEqual('')
   })
@@ -42,6 +40,13 @@ import dateFormat from '../src/index'
     expect(dateFormat(date, 'YYYY/MM/DD')).toEqual('2023/05/19')
     expect(dateFormat(date, 'YYYY年MM月DD日')).toEqual('2023年05月19日')
     expect(dateFormat(date, 'YY-M-D ddd')).toEqual('23-5-19 Fri')
+  })
+
+  it('自定义locale参数', () => {
+    expect(dateFormat(date, 'dddd', 'en')).toEqual('Friday')
+    expect(dateFormat(date, 'dddd', 'zh')).toEqual('星期五')
+    expect(dateFormat(date, 'ddd YYYY/MM/DD', 'en')).toEqual('Fri 2023/05/19')
+    expect(dateFormat(date, 'ddd YYYY/MM/DD', 'zh')).toEqual('周五 2023/05/19')
   })
  })
  

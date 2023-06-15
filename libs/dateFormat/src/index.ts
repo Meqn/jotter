@@ -76,7 +76,7 @@ function _formatNormalize(formatter: IFormatter): FormatterFuc {
 export default function dateFormat(
   date: Date | string | number,
   formatter: IFormatter = 'datetime',
-  locale: 'zh' | 'en' = 'zh'
+  locale: 'zh' | 'en' = 'en'
 ) {
   try {
     if (!date) throw new Error('date is invalid!')
