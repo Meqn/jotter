@@ -45,7 +45,7 @@ const padZoneStr = (date: Date) => {
  * @param {function | string} formatter 时间格式化
  * @returns function
  */
-function _formatNormalize(formatter: IFormatter): FormatterFuc {
+function formatNormalize(formatter: IFormatter): FormatterFuc {
   if (typeof formatter === 'function') return formatter
 
   if (typeof formatter !== 'string') {
@@ -148,7 +148,7 @@ export default function dateFormat(
       ZZ: padZoneStr(date).replace(':', '')
     }
     
-    return _formatNormalize(formatter)(matches)
+    return formatNormalize(formatter)(matches)
   } catch (e) {
     console.error((<Error>e).message)
     return ''
