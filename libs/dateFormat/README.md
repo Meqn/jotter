@@ -1,8 +1,10 @@
 # dateFormat
 
+Lightweight and easy date/time formatting function that returns the formatted date/time based on the passed in placeholders.
+
 轻巧易用的日期/时间格式化函数。根据传入的占位符返回格式化后的日期/时间。
 
-Lightweight and easy date/time formatting function that returns the formatted date/time based on the passed in placeholders.
+
 
 ## Install
 
