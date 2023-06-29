@@ -1,7 +1,7 @@
 {
   "name": "@jotter/from-now",
-  "version": "1.0.0",
-  "description": "Flexible and customizable relative time formatting functions.",
+  "version": "1.0.1",
+  "description": "Very flexible relative time formatting function. You can quickly get the formatted time like 2 minutes ago, 3 weeks ago, in 5 years.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
   "unpkg": "dist/index.global.js",
