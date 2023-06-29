@@ -1,11 +1,14 @@
 # fromNow
 
-Flexible and customizable relative time formatting functions.  
-You can customize the `locale` and `thresholds` used in the formatting to generate a suitable relative time display.
+Very flexible relative time formatting function. You can quickly get formatted times like *2 minutes ago, 3 weeks ago, 5 years from now*.
 
-灵活且可自定义的相对时间格式化函数。  
-您可以通过自定义格式化中使用的语言和阈值，生成合适的相对时间方式显示。
+You can also generate a display that fits your needs by customizing the `locale` and `thresholds` used in the formatting.
 
+
+
+简单灵活的相对时间格式化函数。可以快速获取像 *2分钟前，3周前，5年后* 的格式化时间。
+
+您还可以通过自定义格式化中使用的语言和阈值，生成合适的显示方式。
 
 ## Install
 
@@ -142,3 +145,9 @@ fromNow(date)
   yy: '%d years',
 }
 ```
+
+> **说明**：
+> 1. 如果字符串包含`%ns`，则表示不显示后缀。 比如 `{ s: '刚刚%ns' }`;
+> 2. 如果格式对象属性值为数组，比如 `{ s: ['刚刚%ns', '很快%ns'] }`
+>   - `[0]`表示 `past` 的格式化结果
+>   - `[1]`表示 `future` 的格式化结果
