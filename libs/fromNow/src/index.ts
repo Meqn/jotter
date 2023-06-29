@@ -24,8 +24,8 @@ export class RelativeTime {
    * @param thresholds 自定义阈值
    */
   constructor({ locale, thresholds }: IOptions = {}) {
-    this.locale = assign(assign({}, LOCALE_MAP.en), locale || {})
-    this.thresholds = assign(assign({}, THRESHOLDS), thresholds || {})
+    this.locale = assign({}, LOCALE_MAP.en, locale || {})
+    this.thresholds = assign({}, THRESHOLDS, thresholds || {})
   }
 
   public updateLocale(locale: Partial<IRelativeTimeOptions>) {
@@ -136,10 +136,8 @@ export const create: CreateFunc = (options = {}) => {
   fromNow.locale = (name, config) => {
     if (!name) return
     if (typeof name === 'string') {
-      config = assign(
-        assign({}, LOCALE_MAP[name.indexOf('en') === 0 ? 'en' : 'zh']),
-        config || {}
-      )
+      const _locale = LOCALE_MAP[name.indexOf('en') === 0 ? 'en' : 'zh']
+      config = assign({}, _locale, config || {})
     } else if (isPlanObject(name)) {
       config = name as Partial<IRelativeTimeOptions>
     }
