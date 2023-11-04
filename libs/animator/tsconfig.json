@@ -1,0 +1,9 @@
+{
+  "extends": "../../build/tsconfig.simple.json",
+  "compilerOptions": {
+    "target": "ES2015",
+    "lib": ["ESNext", "DOM"],
+    "declaration": false,
+  },
+  "include": ["src"]
+}
