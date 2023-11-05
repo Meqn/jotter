@@ -1,9 +1,9 @@
 # Jotter
 Document some lightweight front-end libraries (wheel building). The main features is "simple, universal, no dependence".
 
-记录一些轻量级的前端库 (造轮子)。👉 主打的就是一个 "简洁、通用、无依赖"。
+记录一些轻量级的前端库 (造轮子)。👉 主打 "简洁、通用、无依赖"。
 
-全部来自工作中开发的源码，非常适合简单的项目。
+全部来自工作中开发的源码，非常适合项目中实现一些简单功能。
 
 
 
@@ -23,6 +23,7 @@ Document some lightweight front-end libraries (wheel building). The main feature
 | [@jotter/drag](https://github.com/Meqn/jotter/tree/main/libs/drag) | Lightweight "drag-and-drop" library of draggable elements within a specified range. |
 | [@jotter/dateformat](https://github.com/Meqn/jotter/tree/main/libs/dateFormat) | a date/time formatting function. |
 | [@jotter/from-now](https://github.com/Meqn/jotter/tree/main/libs/fromNow) | a relative time formatting functions. |
+| [@jotter/animator](https://github.com/Meqn/jotter/tree/main/libs/animator) | Animator is an animation playback controller. |
 
 
 
@@ -53,6 +54,9 @@ Document some lightweight front-end libraries (wheel building). The main feature
 灵活且可自定义的相对时间格式化函数。  
 您可以通过自定义格式化中使用的语言和阈值，生成合适的相对时间方式显示。
 
+
+### @jotter/animator
+Animator 是一个动画播放控制器。它提供了播放控制、进度控制、速率控制等功能，可以方便地创建和控制JavaScript动画。
 
 
 
