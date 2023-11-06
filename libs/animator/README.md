@@ -1,7 +1,16 @@
 # Animator
 
+[![version](https://img.shields.io/npm/v/@jotter/animator?style=flat-square)](https://www.npmjs.com/package/@jotter/animator)
+[![downloads](https://img.shields.io/npm/dm/@jotter/animator?style=flat-square)](https://www.npmjs.com/package/@jotter/animator)
+[![size](https://img.shields.io/bundlephobia/minzip/@jotter/animator?style=flat-square)](https://bundlephobia.com/package/@jotter/animator)
+[![languages](https://img.shields.io/github/languages/top/meqn/jotter?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/animator)
+[![license](https://img.shields.io/npm/l/@jotter/animator?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/animator)
+
+> Animator is an animation playback controller. It provides playback control, progress control, rate control and other features that make it easy to create and control JavaScript animations.
+
 Animator 是一个动画播放控制器。它提供了播放控制、进度控制、速率控制等功能，可以方便地创建和控制JavaScript动画。
 
+- [Online Demo](https://codepen.io/mengqing/full/qBLKbGQ)
 
 ## Features
 
@@ -26,7 +35,7 @@ https://cdn.jsdelivr.net/npm/@jotter/animator/dist/index.global.js
 
 ## Usage
 
-[Live]()
+[Example](./example/index.html)
 
 ```js
 const animator = new Animator({
