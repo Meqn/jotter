@@ -1,5 +1,5 @@
-import type { IOptions } from './types'
-import { calcTimeByProgress } from './util'
+import type {IOptions} from './types'
+import {calcTimeByProgress} from './util'
 
 const defaults: Pick<IOptions, 'duration' | 'timing' | 'render' | 'rate'> = {
   duration: 1000,
@@ -10,7 +10,7 @@ const defaults: Pick<IOptions, 'duration' | 'timing' | 'render' | 'rate'> = {
 
 /**
  * 动画播放控制器
- * 
+ *
  * 实现方案:
  * 1. 按时长计算: 进行时长和总时长 (进度 = 进行时长 / 总时长) ✅
  * 2. 按时间计算: 开始时间和当前时间 (进度 = (当前时间 - 开始时间) / 总时长)
@@ -76,13 +76,15 @@ export default class Animator {
    */
   private _tick(timestamp: number) {
     if (!this._paused) {
-      const delta = this._lastTick ? (timestamp - this._lastTick) * this.rate : 0;
-      this._current += delta;
-      this._current = Math.min(Math.max(this._current, 0), this.duration);
+      const delta = this._lastTick
+        ? (timestamp - this._lastTick) * this.rate
+        : 0
+      this._current += delta
+      this._current = Math.min(Math.max(this._current, 0), this.duration)
       this._render()
       if (this._current < this.duration) {
-        this._lastTick = timestamp;
-        this._rafId = requestAnimationFrame(this._tick.bind(this));
+        this._lastTick = timestamp
+        this._rafId = requestAnimationFrame(this._tick.bind(this))
       } else {
         // 播放完之后停止
         if (this.loop) {
@@ -95,14 +97,14 @@ export default class Animator {
   }
 
   private _render() {
-    this.options.render(this.options.timing(this._current / this.duration));
+    this.options.render(this.options.timing(this._current / this.duration))
   }
 
   start() {
     this._current = 0
     this._paused = false
     this._lastTick = 0
-    this._rafId = requestAnimationFrame(this._tick.bind(this));
+    this._rafId = requestAnimationFrame(this._tick.bind(this))
   }
 
   play() {
@@ -111,12 +113,12 @@ export default class Animator {
       this.start()
       return
     }
-    
+
     // 2. 继续播放
     if (this._paused) {
       this._paused = false
       this._lastTick = 0
-      this._rafId = requestAnimationFrame(this._tick.bind(this));
+      this._rafId = requestAnimationFrame(this._tick.bind(this))
     }
   }
 
@@ -133,7 +135,7 @@ export default class Animator {
     this._lastTick = 0
     this._rafId = null
   }
-  
+
   /**
    * 前进时间
    * @param {number} time 时间, 单位: ms
@@ -141,13 +143,13 @@ export default class Animator {
   forward(time: number) {
     if (!this._rafId) return
 
-    this._current += time;
-    this._current = Math.min(this._current, this.duration);
+    this._current += time
+    this._current = Math.min(this._current, this.duration)
     if (this._paused) {
       this._render()
     }
   }
-  
+
   /**
    * 后退时间
    * @param {number} time 时间, 单位: ms
@@ -155,12 +157,10 @@ export default class Animator {
   backward(time: number) {
     if (!this._rafId) return
 
-    this._current -= time;
-    this._current = Math.max(this._current, 0);
+    this._current -= time
+    this._current = Math.max(this._current, 0)
     if (this._paused) {
       this._render()
     }
   }
-
 }
-
