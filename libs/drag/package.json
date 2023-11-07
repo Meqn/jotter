@@ -1,6 +1,6 @@
 {
   "name": "@jotter/drag",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Lightweight drag-and-drop library that allows you to quickly and easily make DOM elements draggable within specified boundaries.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -27,7 +27,8 @@
     "drag-and-drop",
     "draggable",
     "drag",
-    "drop"
+    "drop",
+    "touch"
   ],
   "homepage": "https://github.com/Meqn/jotter/tree/main/libs/drag",
   "repository": {
