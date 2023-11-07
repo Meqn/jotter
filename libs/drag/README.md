@@ -1,7 +1,16 @@
 # Drag
 
-Lightweight `drag-and-drop` library that allows you to quickly and easily make DOM elements draggable within specified boundaries.  
-It supports setting drag element, limiting drag boundaries, and horizontal, vertical, and free drag.
+[![version](https://img.shields.io/npm/v/@jotter/drag?style=flat-square)](https://www.npmjs.com/package/@jotter/drag)
+[![downloads](https://img.shields.io/npm/dm/@jotter/drag?style=flat-square)](https://www.npmjs.com/package/@jotter/drag)
+[![size](https://img.shields.io/bundlephobia/minzip/@jotter/drag?style=flat-square)](https://bundlephobia.com/package/@jotter/drag)
+[![languages](https://img.shields.io/github/languages/top/meqn/jotter?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/drag)
+![ES5](https://img.shields.io/badge/Supports-ES5-brightgreen?style=flat-square)
+[![license](https://img.shields.io/npm/l/@jotter/drag?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/drag)
+
+
+> Lightweight `drag-and-drop` library that allows you to quickly and easily make DOM elements draggable within specified boundaries.  
+> 
+> It supports setting drag element, limiting drag boundaries, and horizontal, vertical, and free drag.
 
 
 一个轻量级的拖拽库，允许你快速而轻松地使DOM元素在指定范围内拖动。
