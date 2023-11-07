@@ -192,7 +192,7 @@ export default class Draggable {
       offsetX = 0
     }
 
-    if (this.boundary) {
+    if (this.boundary && this.dragRange) {
       const { minX, maxX, minY, maxY } = this.dragRange
 
       if (offsetX < minX) {

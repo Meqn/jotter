@@ -32,6 +32,9 @@
     onMove: (e) => {},
     onEnd: (e) => {}
   })
+
+  refs:
+  - [draggabilly](https://github.com/desandro/draggabilly)
  */
 
 export default class Draggable {
