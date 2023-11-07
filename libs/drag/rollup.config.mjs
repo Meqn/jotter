@@ -1,7 +1,21 @@
+import dts from 'rollup-plugin-dts'
 import pkg from './package.json' assert { type: 'json'}
 import { generateConfig } from '../../build/rollup.config.simple.mjs'
 
-export default generateConfig({
-  name: 'Draggable',
-  pkg
-})
+const name = 'Draggable'
+
+export default [
+  generateConfig({
+    input: 'src/index.ts',
+    name,
+    pkg
+  }),
+  {
+    input: 'src/index.ts',
+    plugins: [dts()],
+    output: {
+      file: 'dist/index.d.ts',
+      format: 'es'
+    }
+  }
+]
