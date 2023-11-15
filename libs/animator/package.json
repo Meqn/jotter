@@ -1,6 +1,6 @@
 {
   "name": "@jotter/animator",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "Animator is an animation playback controller. It makes it easy to create and control JavaScript animations.",
   "main": "dist/index.js",
   "module": "dist/index.esm.js",
@@ -32,6 +32,10 @@
     "animation controller",
     "requestAnimationFrame"
   ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org"
+  },
   "homepage": "https://github.com/Meqn/jotter/tree/main/libs/animator",
   "repository": {
     "type": "git",
