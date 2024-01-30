@@ -40,7 +40,7 @@ import WebSocketConnect from '@jotter/websocket'
 
 const socket = new WebSocketConnect('ws://127.0.0.1/ws', {
   // 实例化后立即连接
-  automaticOpen: true,
+  autoOpen: true,
   // 异常断开后自动重连
   shouldReconnect(event) {
     return ![1000, 1001, 1005].includes(event.code)
@@ -90,7 +90,7 @@ websocket连接协议.
 ## Options
 WebSocket 连接选项
 
-### automaticOpen
+### autoOpen
 是否在实例化时立即尝试连接.  
 可调用`ws.open()`和`ws.close()`手动打开或关闭
 - Type: `boolean`

@@ -2,12 +2,16 @@
 
 [ [English](./README.md) | [中文](https://github.com/Meqn/jotter/blob/main/libs/websocket/README.zh_CN.md) ]
 
-[![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
-[![download](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
-[![license](https://img.shields.io/npm/l/@jotter/websocket?style=flat-square)](https://github.com/Meqn/jotter/tree/main/libs/websocket)
-![suppert](https://img.shields.io/badge/Support-ES2015-brightgreen?style=flat-square)
 
-Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
+[![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
+[![downloads](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
+[![size](https://img.shields.io/bundlephobia/minzip/@jotter/websocket?style=flat-square)](https://bundlephobia.com/package/@jotter/websocket)
+[![languages](https://img.shields.io/github/languages/top/meqn/jotter?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/websocket)
+[![license](https://img.shields.io/npm/l/@jotter/websocket?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/websocket)
+
+
+
+> Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
 
 
 
@@ -41,7 +45,7 @@ import WebSocketConnect from '@jotter/websocket'
 
 const socket = new WebSocketConnect('ws://127.0.0.1/ws', {
   // Connect immediately after instantiation
-  automaticOpen: true,
+  autoOpen: true,
   // Automatically reconnect after abnormal disconnection
   shouldReconnect(event) {
     return ![1000, 1001, 1005].includes(event.code)
@@ -91,7 +95,7 @@ WebSocket connection protocol.
 ## Options
 WebSocket connection options.
 
-### automaticOpen
+### autoOpen
 Whether to attempt to connect immediately upon instantiation.  
 You can manually open or close by calling `ws.open()` and `ws.close()`.
 - Type: `boolean`
