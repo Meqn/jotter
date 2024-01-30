@@ -33,7 +33,7 @@ export function generateConfig({
     ],
     output: [
       {
-        name,
+        name: name ?? pkg.name,
         file: pkg.unpkg ?? 'dist/index.global.js',
         format: 'iife',
         // exports: 'named',
