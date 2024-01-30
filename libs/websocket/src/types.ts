@@ -19,7 +19,7 @@ export interface IArguments {
    * 可调用`ws.open()`和`ws.close()`手动打开或关闭
    * @default true
    */
-  readonly automaticOpen: boolean
+  readonly autoOpen: boolean
 
   /**
    * 是否开启自动重连机制, 默认 code=[1000, 1001, 1005] 不会重连

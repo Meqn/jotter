@@ -49,7 +49,7 @@ function getOptions(
 ): IOptions {
   const defaults = {
     // timeout: 4000,
-    automaticOpen: true,
+    autoOpen: true,
     shouldReconnect: true,
     maxReconnectAttempts: Infinity,
     reconnectInterval: 1000,
@@ -149,7 +149,7 @@ export default class WebSocketConnect{
     this._eventTarget = eventTarget
 
     // 在实例化时是否打开连接
-    if (this.options.automaticOpen) {
+    if (this.options.autoOpen) {
       this.open(false)
     }
   }
