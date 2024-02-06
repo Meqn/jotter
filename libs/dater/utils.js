@@ -37,4 +37,28 @@ export function parseDate(date, utc) {
 
 export const isObject = o => Object.prototype.toString.call(o) === '[object Object]'
 
-export const isDater = d => d instanceof Dater || (d && d['$is'])
+/**
+ * 补位指定长度的字符串
+ * @param {string | number} value 日期
+ * @param {number} length 长度
+ * @param {string} pad 补位
+ * @returns {string}
+ */
+export const padStart = (value, length, pad) => {
+  const s = String(value)
+  if (!s || s.length >= length) return s
+  return `${Array((length + 1) - s.length).join(pad)}${value}`
+}
+
+/**
+ * 时区字符串
+ * @param {Date} date 日期
+ * @returns
+ */
+export const padZoneStr = (date) => {
+  const negMinutes = -(-Math.round(date.getTimezoneOffset() / 15) * 15)
+  const minutes = Math.abs(negMinutes)
+  const hourOffset = Math.floor(minutes / 60)
+  const minuteOffset = minutes % 60
+  return `${negMinutes <= 0 ? '+' : '-'}${padStart(hourOffset, 2, '0')}:${padStart(minuteOffset, 2, '0')}`
+}

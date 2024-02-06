@@ -1,17 +1,19 @@
-import { parseDate, isDater, isObject } from "./utils"
-import en from "./locale/en"
+import * as Utils from './utils'
+import en from './locale/en'
 
 // 全局 locale
 let CURRENT_LOCALE = 'en'
 const LOCALES = {}
 LOCALES[CURRENT_LOCALE] = en
 
+const isDater = d => d instanceof Dater || (d && d['$is'])
+
 function dater(...args) {
   const date = args[0]
   if (isDater(date)) return date.clone()
 
   let last = args[args.length - 1]
-  if (typeof last === 'boolean' || isObject(last)) {
+  if (typeof last === 'boolean' || Utils.isObject(last)) {
     args.pop()
   }
   return new Dater(args, last)
@@ -19,15 +21,15 @@ function dater(...args) {
 
 class Dater {
   constructor(date, options) {
-    options = typeof options === 'boolean' ? { utc: options } : options || {}
+    options = typeof options === 'boolean' ? {utc: options} : options || {}
     this.parse(date, options.utc)
-    this.$is = true
+    this.$is = true // 标记为 dater
     this.$utc = !!options.utc
-    this.$locale = LOCALES[options.locale] || LOCALES[CURRENT_LOCALE]
+    this.$locale = LOCALES[options.locale] || LOCALES[CURRENT_LOCALE] //当前locale数据
   }
 
-  parse(date) {
-    this.$date = parseDate(date)
+  parse(date, utc) {
+    this.$date = Utils.parseDate(date, utc)
     this.init()
   }
   init() {
@@ -48,8 +50,8 @@ class Dater {
     if (typeof preset === 'string') {
       const name = preset.toLowerCase()
       let localeData = LOCALES[name]
-      
-      if (isObject(data)) {
+
+      if (Utils.isObject(data)) {
         localeData = data
       } else if (typeof data === 'function') {
         localeData = data.call(dater, localeData)
@@ -59,10 +61,10 @@ class Dater {
         localeData.name = name
         this.$locale = localeData
       }
-    } else if (isObject(preset)) {
+    } else if (Utils.isObject(preset)) {
       this.$locale = preset
     }
-    
+
     return this
   }
   isValid() {
@@ -84,7 +86,7 @@ class Dater {
 Object.getOwnPropertyNames(Date.prototype).forEach(prop => {
   const dateFn = Date.prototype[prop]
   if (prop !== 'constructor' && typeof dateFn === 'function') {
-    Dater.prototype[prop] = function(...args) {
+    Dater.prototype[prop] = function (...args) {
       // 操作clone数据
       if (prop.indexOf('set') === 0) {
         const clone = this.clone()
@@ -98,39 +100,46 @@ Object.getOwnPropertyNames(Date.prototype).forEach(prop => {
 })
 
 dater.prototype = Dater.prototype
-dater.use = function(plugin, option) {
+
+/**
+ * 注册插件
+ * @param {function} plugin - 需要注册的插件
+ * @param {any} option - 插件的可选参数
+ * @return {dater}
+ */
+dater.use = function (plugin, option) {
   if (!plugin.installed) {
     plugin.call(dater, option, Dater, dater)
     plugin.installed = true
   }
   return dater
 }
+
 /**
  * 设置locale数据
- *
  * @param {string|Object} preset - locale名称或预设数据对象
  * @param {Object|function} data - 预设数据对象
  */
-dater.locale = function(preset, data) {
+dater.locale = function (preset, data) {
   if (!preset) return CURRENT_LOCALE
-  
+
   if (typeof preset === 'string') {
     const name = preset.toLowerCase()
     let localeData = LOCALES[name]
     // 处理 data 数据(覆盖或更新)
-    if (isObject(data)) {
+    if (Utils.isObject(data)) {
       localeData = data
     } else if (typeof data === 'function') {
       localeData = data.call(dater, localeData)
     }
-    
+
     if (localeData) {
       CURRENT_LOCALE = name //变更默认语言
       localeData.name = name
       LOCALES[name] = localeData // 保存语言包
     }
-  } else if (isObject(preset)) {
-    const { name } = preset
+  } else if (Utils.isObject(preset)) {
+    const {name} = preset
     LOCALES[name] = preset
     CURRENT_LOCALE = name
   }
@@ -141,3 +150,4 @@ dater.utc = (...args) => dater(args, true)
 dater.unix = t => dater(t * 1e3)
 dater.now = Date.now
 dater.isDater = isDater
+dater.utils = Utils
