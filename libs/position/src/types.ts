@@ -55,3 +55,6 @@ export interface IOptions {
    */
   marginRight?: number
 }
+
+export type IPositionXOptions = Pick<IOptions, 'offsetX' | 'marginLeft' | 'marginRight'>
+export type IPositionYOptions = Pick<IOptions, 'offsetY' | 'marginTop' | 'marginBottom'>

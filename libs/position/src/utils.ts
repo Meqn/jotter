@@ -1,10 +1,10 @@
-import type { IOptions } from './types'
+import type {IOptions, IPositionXOptions, IPositionYOptions} from './types'
 
-type IGetPositionYOptions = Pick<IOptions, 'offsetY' | 'marginTop' | 'marginBottom'> & {
+type IGetPositionYOptions = IPositionYOptions & {
   refTop: number
   targetHeight: number
 }
-type IGetPositionXOptions = Pick<IOptions, 'offsetX' | 'marginLeft' | 'marginRight'> & {
+type IGetPositionXOptions = IPositionXOptions & {
   refLeft: number
   refWidth: number
   targetWidth: number
@@ -21,16 +21,10 @@ type SetPositionFunc = (target: HTMLElement, ref: HTMLElement, options?: IOption
 /**
  * 获取元素垂直定位 top值
  * @param options 定位选项
- * @returns 
+ * @returns
  */
 export function getPositionY(options: IGetPositionYOptions) {
-  const {
-    refTop,
-    targetHeight,
-    offsetY = 0,
-    marginTop = 0,
-    marginBottom = 0
-  } = options || {}
+  const {refTop, targetHeight, offsetY = 0, marginTop = 0, marginBottom = 0} = options || {}
   const winHeight = window.innerHeight || document.documentElement.clientHeight
 
   // 计算定位元素的预期位置
@@ -52,7 +46,7 @@ export function getPositionY(options: IGetPositionYOptions) {
 /**
  * 获取元素水平定位 left值
  * @param options 定位选项
- * @returns 
+ * @returns
  */
 export function getPositionX(options: IGetPositionXOptions) {
   const {
@@ -82,25 +76,24 @@ export function getPositionX(options: IGetPositionXOptions) {
 }
 
 /**
- * 根据参照元素和选项 设置目标元素的水平位置 
+ * 根据参照元素和选项 设置目标元素的水平位置
  */
 export const setPositionX: SetPositionFunc = (target, ref, options = {}) => {
-  const {
-    position = {},
-    placement,
-    offsetX = 0
-  } = options
-  
-  const { width: targetWidth, height: targetHeight } = target.getBoundingClientRect()
-  const { top: refTop, left: refLeft, right: refRight } = ref.getBoundingClientRect()
+  const {position = {}, placement, offsetX = 0} = options
+
+  const {width: targetWidth, height: targetHeight} = target.getBoundingClientRect()
+  const {top: refTop, left: refLeft, right: refRight} = ref.getBoundingClientRect()
 
   if (!position.left && !position.right) {
-    const _left = placement === 'left' ? refLeft - targetWidth - Math.abs(offsetX) : refRight + Math.abs(offsetX)
+    const _left =
+      placement === 'left'
+        ? refLeft - targetWidth - Math.abs(offsetX)
+        : refRight + Math.abs(offsetX)
     target.style.left = _left + 'px'
   }
 
   if (!position.top && !position.bottom) {
-    target.style.top = getPositionY({ ...options, refTop, targetHeight }) + 'px'
+    target.style.top = getPositionY({...options, refTop, targetHeight}) + 'px'
   }
 }
 
@@ -108,39 +101,38 @@ export const setPositionX: SetPositionFunc = (target, ref, options = {}) => {
  * 根据参照元素和选项 设置目标元素的垂直位置
  */
 export const setPositionY: SetPositionFunc = (target, ref, options = {}) => {
+  const {position = {}, placement, offsetY = 0} = options
+
+  const {width: targetWidth, height: targetHeight} = target.getBoundingClientRect()
   const {
-    position = {},
-    placement,
-    offsetY = 0
-  } = options
-  
-  const { width: targetWidth, height: targetHeight } = target.getBoundingClientRect()
-  const { width: refWidth, top: refTop, bottom: refBottom, left: refLeft } = ref.getBoundingClientRect()
+    width: refWidth,
+    top: refTop,
+    bottom: refBottom,
+    left: refLeft
+  } = ref.getBoundingClientRect()
 
   if (!position.top && !position.bottom) {
-    const _top = placement === 'top' ? refTop - targetHeight - Math.abs(offsetY) : refBottom + Math.abs(offsetY)
+    const _top =
+      placement === 'top'
+        ? refTop - targetHeight - Math.abs(offsetY)
+        : refBottom + Math.abs(offsetY)
     target.style.top = _top + 'px'
   }
 
   if (!position.left && !position.right) {
-    target.style.left = getPositionX({ ...options, refLeft, refWidth, targetWidth }) + 'px'
+    target.style.left = getPositionX({...options, refLeft, refWidth, targetWidth}) + 'px'
   }
 }
 
 /**
- * 设置目标元素相对于参照元素的位置 
+ * 设置目标元素相对于参照元素的位置
  */
 export const setPositionAuto: SetPositionFunc = (target, ref, options = {}) => {
-  const {
-    position = {},
-    offsetX = 0,
-    marginLeft = 0,
-    marginRight = 0
-  } = options
+  const {position = {}, offsetX = 0, marginLeft = 0, marginRight = 0} = options
 
   const winWidth = window.innerWidth || document.documentElement.clientHeight
-  const { width: targetWidth, height: targetHeight } = target.getBoundingClientRect()
-  const { top: refTop, left: refLeft, right: refRight } = ref.getBoundingClientRect()
+  const {width: targetWidth, height: targetHeight} = target.getBoundingClientRect()
+  const {top: refTop, left: refLeft, right: refRight} = ref.getBoundingClientRect()
 
   if (!position.left && !position.right) {
     // 左侧区域大于右侧区域
@@ -154,6 +146,6 @@ export const setPositionAuto: SetPositionFunc = (target, ref, options = {}) => {
   }
 
   if (!position.top && !position.bottom) {
-    target.style.top = getPositionY({ ...options, refTop, targetHeight }) + 'px'
+    target.style.top = getPositionY({...options, refTop, targetHeight}) + 'px'
   }
 }
