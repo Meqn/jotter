@@ -1,5 +1,6 @@
 # Jotter
-Document some lightweight front-end libraries (wheel building). The main features is "simple, universal, no dependence".
+
+> Document some lightweight front-end libraries (wheel building). The main features is "simple, universal, no dependence".
 
 记录一些轻量级的前端库 (造轮子)。👉 主打 "简洁、通用、无依赖"。
 
@@ -18,13 +19,22 @@ Document some lightweight front-end libraries (wheel building). The main feature
 
 | Package                                                      | Status                                                       |
 | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| [@jotter/animator](https://github.com/Meqn/jotter/tree/main/libs/animator) | Animator is an animation playback controller. |
+| [@jotter/drag](https://github.com/Meqn/jotter/tree/main/libs/drag) | Lightweight "drag-and-drop" library of draggable elements within a specified range. |
 | [@jotter/emitter](https://github.com/Meqn/jotter/tree/main/libs/emitter) | Simple and modern event emitter library. |
 | [@jotter/websocket](https://github.com/Meqn/jotter/tree/main/libs/websocket) | Modern and useful WebSocket wrapper, with standard WebSocket API. |
-| [@jotter/drag](https://github.com/Meqn/jotter/tree/main/libs/drag) | Lightweight "drag-and-drop" library of draggable elements within a specified range. |
 | [@jotter/dateformat](https://github.com/Meqn/jotter/tree/main/libs/dateFormat) | a date/time formatting function. |
 | [@jotter/from-now](https://github.com/Meqn/jotter/tree/main/libs/fromNow) | a relative time formatting functions. |
-| [@jotter/animator](https://github.com/Meqn/jotter/tree/main/libs/animator) | Animator is an animation playback controller. |
+| [@jotter/position](https://github.com/Meqn/jotter/tree/main/libs/position) | Positioning a DOM element relative to another DOM element. |
 
+
+
+### @jotter/animator
+Animator 是一个动画播放控制器。它提供了播放控制、进度控制、速率控制等功能，可以方便地创建和控制JavaScript动画。
+
+
+### @jotter/drag
+一个轻量级的拖拽库，允许你快速创建在指定范围内可拖动的元素。
 
 
 ### @jotter/emitter
@@ -42,10 +52,6 @@ Document some lightweight front-end libraries (wheel building). The main feature
 * 💗 内置心跳检测方法，始终处于保活状态。
 
 
-### @jotter/drag
-一个轻量级的拖拽库，允许你快速创建在指定范围内可拖动的元素。
-
-
 ### @jotter/dateformat
 轻巧易用的日期/时间格式化函数。根据传入的占位符返回格式化后的日期/时间。
 
@@ -55,23 +61,7 @@ Document some lightweight front-end libraries (wheel building). The main feature
 您可以通过自定义格式化中使用的语言和阈值，生成合适的相对时间方式显示。
 
 
-### @jotter/animator
-Animator 是一个动画播放控制器。它提供了播放控制、进度控制、速率控制等功能，可以方便地创建和控制JavaScript动画。
+### @jotter/from-now
+`position` 提供了一组简单的方法，轻松的将一个DOM元素相对于另一个DOM元素进行定位操作。
 
 
-
----
-
-
-
-## Publish
-
-发布 npm Scoped 包
-
-```bash
-# 设置 scope
-npm init --scope=@jotter
-
-# 发布公共范围模块
-npm publish --access public
-```

@@ -16,6 +16,19 @@ pnpm release <module>
 ```
 
 
+## Publish
+
+发布 npm Scoped 包
+
+```bash
+# 设置 scope
+npm init --scope=@jotter
+
+# 发布公共范围模块
+npm publish --access public
+```
+
+
 ## package.json
 ```js
 {
