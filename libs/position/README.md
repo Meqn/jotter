@@ -1,6 +1,13 @@
 # position
 
-Positioning a DOM element relative to another DOM element.
+[![version](https://img.shields.io/npm/v/@jotter/position?style=flat-square)](https://www.npmjs.com/package/@jotter/position)
+[![downloads](https://img.shields.io/npm/dm/@jotter/position?style=flat-square)](https://www.npmjs.com/package/@jotter/position)
+[![size](https://img.shields.io/bundlephobia/minzip/@jotter/position?style=flat-square)](https://bundlephobia.com/package/@jotter/position)
+[![languages](https://img.shields.io/github/languages/top/meqn/jotter?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/position)
+[![license](https://img.shields.io/npm/l/@jotter/position?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/position)
+
+
+> Positioning a DOM element relative to another DOM element.
 
 `position` 提供了一组简单的方法，轻松的将一个DOM元素相对于另一个DOM元素进行定位操作。
 
@@ -17,6 +24,8 @@ https://cdn.jsdelivr.net/npm/@jotter/position/dist/index.min.js
 
 
 ## Usage
+
+[Online Demo](https://codepen.io/mengqing/pen/oNVOZop)
 
 ```js
 import position from '@jotter/position'
@@ -84,8 +93,9 @@ position.setY(element, referenceElement, options)
 #### position
 目标元素的固定位置
 
-- `Type`: `'fixed' | 'absolute'`
-- `Default`: `'absolute'`
+- `Type`: `{ top?: number, right?: number, bottom?: number, left?: number }`
+- `Default`: `{}`
+
 
 #### marginTop
 定位元素与视窗顶部间距
