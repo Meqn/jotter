@@ -1,5 +1,8 @@
 const DATE_REG = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/
 
+export const isObject = o => Object.prototype.toString.call(o) === '[object Object]'
+export const isArray = a => Object.prototype.toString.call(a) === '[object Array]'
+
 export function parseDate(date, utc) {
   if (date === undefined) return new Date()
   if (date === null) {
@@ -19,7 +22,7 @@ export function parseDate(date, utc) {
     }
   }
 
-  if (Array.isArray(date)) {
+  if (isArray(date)) {
     if (utc) {
       if (!date.length) {
         return new Date()
@@ -34,8 +37,6 @@ export function parseDate(date, utc) {
   
   return new Date(date)
 }
-
-export const isObject = o => Object.prototype.toString.call(o) === '[object Object]'
 
 /**
  * 补位指定长度的字符串
@@ -61,4 +62,20 @@ export const padZoneStr = (date) => {
   const hourOffset = Math.floor(minutes / 60)
   const minuteOffset = minutes % 60
   return `${negMinutes <= 0 ? '+' : '-'}${padStart(hourOffset, 2, '0')}:${padStart(minuteOffset, 2, '0')}`
+}
+
+/**
+ * 对象浅拷贝
+ * @returns 
+ */
+export const merge = (...args) => {
+  const obj = {}
+  args.forEach(arg => {
+    if (isObject(arg)) {
+      Object.keys(arg).forEach(key => {
+        obj[key] = arg[key]
+      })
+    }
+  })
+  return obj
 }

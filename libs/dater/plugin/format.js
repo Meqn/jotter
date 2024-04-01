@@ -57,7 +57,7 @@ export default function format(_, C, f) {
       ZZ: zoneStr.replace(':', '')
     }
 
-    if (typeof formatter === 'function') return formatter.call(this, matches)
+    if (typeof formatter === 'function') return formatter.call(this, matches, this)
     if (typeof formatter === 'string') {
       const longDateFormat = locale.longDateFormat
       if (longDateFormat && longDateFormat[formatter]) {

@@ -1,10 +1,9 @@
 import * as Utils from './utils'
-import en from './locale/en'
 
 // 全局 locale
 let CURRENT_LOCALE = 'en'
 const LOCALES = {}
-LOCALES[CURRENT_LOCALE] = en
+LOCALES[CURRENT_LOCALE] = {}
 
 const isDater = d => d instanceof Dater || (d && d['$is'])
 
@@ -12,11 +11,13 @@ function dater(...args) {
   const date = args[0]
   if (isDater(date)) return date.clone()
 
-  let last = args[args.length - 1]
-  if (typeof last === 'boolean' || Utils.isObject(last)) {
+  const len = args.length
+  const last = args[len - 1]
+  if (len > 1 && (typeof last === 'boolean' || Utils.isObject(last))) {
     args.pop()
   }
-  return new Dater(args, last)
+
+  return new Dater(args, len > 1 ? last : null)
 }
 
 class Dater {
@@ -44,17 +45,26 @@ class Dater {
     this.$millisecond = d.getMilliseconds()
     this.$week = d.getDay()
   }
+    /**
+   * 获取或设定当前本地化数据。
+   * 1. 当 `preset` 不存在，则返回当前 locale name
+   * 2. 当 `preset` 为字符串，则设置当前 locale
+   * 3. 当 `preset` 为对象，则替换当前 locale
+   *
+   * @param {string|object} preset - locale预设值
+   * @param {object} data - locale数据
+   */
   locale(preset, data) {
     if (!preset) return this.$locale['name']
 
     if (typeof preset === 'string') {
       const name = preset.toLowerCase()
-      let localeData = LOCALES[name]
+      let localeData = Utils.merge(LOCALES[name])
 
       if (Utils.isObject(data)) {
-        localeData = data
+        localeData = Utils.merge(localeData, data)
       } else if (typeof data === 'function') {
-        localeData = data.call(dater, localeData)
+        localeData = data.call(this, localeData)
       }
 
       if (localeData) {
@@ -71,14 +81,30 @@ class Dater {
     // return this.$date.toString() !== 'Invalid Date'
     return !isNaN(this.$timestamp)
   }
-  unix() {
-    return Math.floor(this.$timestamp / 1000)
-  }
   clone() {
     return dater(this.$date, {
       utc: this.$utc,
       locale: this.$locale['name']
     })
+  }
+  toArray() {
+    return [
+      this.$year,
+      this.$month,
+      this.$day,
+      this.$hour,
+      this.$minute,
+      this.$second,
+      this.$millisecond
+    ]
+  }
+  utcOffset() {
+    // Because a bug at FF24, we're rounding the timezone offset around 15 minutes
+    // https://github.com/moment/moment/pull/1871
+    return -Math.round(this.$date.getTimezoneOffset() / 15) * 15
+  }
+  unix() {
+    return Math.floor(this.$timestamp / 1000)
   }
 }
 
@@ -128,7 +154,7 @@ dater.locale = function (preset, data) {
     let localeData = LOCALES[name]
     // 处理 data 数据(覆盖或更新)
     if (Utils.isObject(data)) {
-      localeData = data
+      localeData = Utils.merge(localeData, data)
     } else if (typeof data === 'function') {
       localeData = data.call(dater, localeData)
     }
@@ -138,7 +164,7 @@ dater.locale = function (preset, data) {
       localeData.name = name
       LOCALES[name] = localeData // 保存语言包
     }
-  } else if (Utils.isObject(preset)) {
+  } else if (Utils.isObject(preset) && preset.name) {
     const {name} = preset
     LOCALES[name] = preset
     CURRENT_LOCALE = name
@@ -151,3 +177,5 @@ dater.unix = t => dater(t * 1e3)
 dater.now = Date.now
 dater.isDater = isDater
 dater.utils = Utils
+
+export default dater
