@@ -1,57 +1,77 @@
 {
-  "name": "jotter",
-  "private": true,
-  "description": "jotter",
-  "main": "index.js",
-  "scripts": {
-    "preinstall": "npx only-allow pnpm",
-    "reinstall": "rm -rf node_modules **/*/node_modules && pnpm install --no-frozen-lockfile",
-    "clean": "rm -rf dist **/*/dist",
-    "test": "node ./scripts/build.mjs test",
-    "build": "node ./scripts/build.mjs build",
-    "release": "node ./scripts/build.mjs release",
-    "changeset": "changeset",
-    "changeset:version": "changeset version",
-    "changeset:release": "changeset publish",
-    "build:demo": "pnpm --filter demo run build",
-    "test:polyfill": "pnpm --filter polyfill run test",
-    "build:emitter": "pnpm --filter @jotter/emitter run build",
-    "test:emitter": "pnpm --filter @jotter/emitter run test",
-    "test:websocket": "pnpm --filter @jotter/websocket run test",
-    "test:dateformat": "pnpm --filter @jotter/dateformat run test",
-    "test:fromnow": "pnpm --filter @jotter/from-now run test",
-    "test:drag": "pnpm --filter @jotter/drag run test",
-    "test:animator": "pnpm --filter @jotter/animator run test"
-  },
-  "packageManager": "pnpm@8.6.0",
-  "workspaces": [
-    "libs/*"
-  ],
-  "publishConfig": {
-    "access": "public",
-    "registry": "https://registry.npmjs.org"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "devDependencies": {
-    "@changesets/changelog-github": "^0.5.0",
-    "@changesets/cli": "^2.27.1",
-    "@rollup/plugin-commonjs": "^25.0.7",
-    "@rollup/plugin-json": "^6.1.0",
-    "@rollup/plugin-node-resolve": "^15.2.3",
-    "@rollup/plugin-terser": "^0.4.4",
-    "@types/jest": "^29.5.12",
-    "@types/node": "^20.11.16",
-    "diy-log": "^2.5.1",
-    "jest": "^29.7.0",
-    "jest-environment-jsdom": "^29.7.0",
-    "prettier": "^3.2.4",
-    "rimraf": "^5.0.5",
-    "rollup": "^4.9.6",
-    "rollup-plugin-dts": "^6.1.0",
-    "rollup-plugin-typescript2": "^0.36.0",
-    "ts-jest": "^29.1.2",
-    "typescript": "^5.3.3"
-  }
+	"name": "jotter",
+	"private": true,
+	"description": "jotter",
+	"main": "index.js",
+	"type": "module",
+	"scripts": {
+		"clean": "pnpm run clean:libs",
+		"clean:libs": "rm -rf libs/*/dist",
+		"format": "prettier --write --cache .",
+		"format-check": "prettier --check --cache .",
+		"build": "pnpm run clean:libs && node scripts/build.js",
+		"test": "node scripts/test.js",
+		"jest": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
+		"changelog": "node ./scripts/changelog.js",
+		"changeset": "changeset",
+		"changeset:version": "changeset version",
+		"changeset:release": "changeset publish",
+		"preinstall": "npx only-allow pnpm",
+		"postinstall": "simple-git-hooks",
+		"reinstall": "rimraf node_modules **/*/node_modules && pnpm install --no-frozen-lockfile"
+	},
+	"simple-git-hooks": {
+		"pre-commit": "npx lint-staged",
+		"commit-msg": "node scripts/verifyCommit.js"
+	},
+	"lint-staged": {
+		"*.{js,mjs,json,cjs}": [
+			"prettier --write"
+		],
+		"*.ts?(x)": [
+			"prettier --parser=typescript --write"
+		]
+	},
+	"packageManager": "pnpm@8.6.0",
+	"engines": {
+		"node": ">=18.0.0"
+	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org/"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT",
+	"devDependencies": {
+		"@babel/core": "^7.25.8",
+		"@babel/preset-env": "^7.25.8",
+		"@changesets/changelog-github": "^0.5.0",
+		"@changesets/cli": "^2.27.9",
+		"@rollup/plugin-babel": "^6.0.4",
+		"@rollup/plugin-commonjs": "^28.0.1",
+		"@rollup/plugin-json": "^6.1.0",
+		"@rollup/plugin-node-resolve": "^15.3.0",
+		"@rollup/plugin-terser": "^0.4.4",
+		"@rollup/plugin-typescript": "^12.1.1",
+		"@testing-library/jest-dom": "^6.6.2",
+		"@types/jest": "^29.5.13",
+		"@types/node": "^22.7.6",
+		"babel-jest": "^29.7.0",
+		"cross-env": "^7.0.3",
+		"diy-log": "^2.5.1",
+		"jest": "^29.7.0",
+		"jest-environment-jsdom": "^29.7.0",
+		"lint-staged": "^15.2.10",
+		"minimist": "^1.2.8",
+		"prettier": "^3.3.3",
+		"rimraf": "^6.0.1",
+		"rollup": "^4.24.0",
+		"rollup-plugin-dts": "^6.1.1",
+		"simple-git": "^3.27.0",
+		"simple-git-hooks": "^2.11.1",
+		"ts-jest": "^29.2.5",
+		"tslib": "^2.8.0",
+		"typescript": "^5.6.3"
+	}
 }

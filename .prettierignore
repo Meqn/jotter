@@ -1,4 +1,4 @@
 dist
 node_modules
-
-*.html
+pnpm-lock.yaml
+CHANGELOG*.md

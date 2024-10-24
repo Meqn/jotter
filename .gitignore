@@ -1,29 +1,25 @@
 .DS_Store
 node_modules
-dist
-coverage
-examples
-_docs
+temp
 
-libs/demo
-
-.note.*
+# Ignore build output
+dist/
+coverage/
+*.js.map
 
 # local env files
 .env.local
 .env.*.local
 
 # Log files
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-pnpm-debug.log*
+*.log
+TODOs.md
 
 # Editor directories and files
 .idea
-.vscode
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+*.tsbuildinfo

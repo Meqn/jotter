@@ -1,12 +1,20 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
-  // roots: ['<rootDir>'],
-  preset: 'ts-jest',
-  testEnvironment: 'node',
-  transform: {
-    '^.+\\.tsx?$': 'ts-jest',
-  },
-  testRegex: '(/__tests__/.*|(\\.|/)(test|spec))\\.tsx?$',
-  moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json', 'node'],
-  collectCoverage: true, // 是否显示覆盖率报告
+export default {
+	preset: 'ts-jest',
+	testEnvironment: 'jsdom', // 'node'
+	roots: ['<rootDir>'],
+	setupFilesAfterEnv: ['@testing-library/jest-dom'],
+	testMatch: ['**/__tests__/**/*.[jt]s', '**/?(*.)+(spec|test).[jt]s'],
+	transform: {
+		'^.+\\.tsx?$': ['ts-jest', { useESM: true }],
+		'^.+\\.jsx?$': 'babel-jest',
+	},
+	moduleNameMapper: {
+		'^@/(.*)$': '<rootDir>/src/$1',
+		'^@lib/(.*)$': '<rootDir>/libs/$1',
+	},
+	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
+	// collectCoverage: true,
+	coverageDirectory: 'coverage',
+	coverageReporters: ['text', 'lcov'],
 }
