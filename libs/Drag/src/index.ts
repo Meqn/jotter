@@ -167,7 +167,11 @@ class Drag {
 	}
 
 	private dragStart(event: MouseEvent | TouchEvent): void {
-		event.preventDefault() // 阻止默认行为，如页面滚动
+		// 阻止默认行为，如页面滚动
+		event.preventDefault()
+		//忽略右键点击
+		if (event instanceof MouseEvent && event.button !== 0) return
+
 		this.dragging = true
 
 		const e = 'touches' in event ? event.touches[0] : event

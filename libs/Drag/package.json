@@ -18,6 +18,12 @@
 	"files": [
 		"dist"
 	],
+	"buildOptions": {
+		"target": [
+			"es2015",
+			"es5"
+		]
+	},
 	"keywords": [
 		"drag-and-drop",
 		"draggable",
