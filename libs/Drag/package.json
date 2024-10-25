@@ -19,6 +19,7 @@
 		"dist"
 	],
 	"buildOptions": {
+		"name": "Drag",
 		"target": [
 			"es2015",
 			"es5"
