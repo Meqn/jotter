@@ -1,0 +1,11 @@
+{
+	"npm.packageManager": "pnpm",
+	"cSpell.ignoreWords": ["cjs", "esm", "iife", "preinstall", "nocheck", "Marinerer"],
+	"editor.formatOnSave": true,
+	"editor.defaultFormatter": "esbenp.prettier-vscode",
+	"editor.quickSuggestions": {
+		"other": "on",
+		"comments": "on",
+		"strings": "on"
+	}
+}
