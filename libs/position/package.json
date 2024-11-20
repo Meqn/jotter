@@ -1,0 +1,45 @@
+{
+	"name": "@jotter/position",
+	"version": "1.0.1",
+	"description": "Positioning a DOM element relative to another DOM element.",
+	"type": "module",
+	"main": "dist/index.js",
+	"unpkg": "dist/index.min.js",
+	"jsdelivr": "dist/index.min.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"module": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./*": "./dist/*"
+	},
+	"files": [
+		"dist"
+	],
+	"buildOptions": {
+		"name": "position",
+		"target": "es2015"
+	},
+	"keywords": [
+		"position",
+		"fixed",
+		"popup",
+		"tooltip"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	},
+	"sideEffects": false,
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/position",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Marinerer/jotter.git",
+		"directory": "libs/position"
+	},
+	"author": "Mariner <mengqing723@gmail.com>",
+	"license": "MIT"
+}

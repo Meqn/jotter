@@ -1,12 +1,12 @@
 # @jotter/position
 
-## 1.0.1
+## 1.0.1 🌟
 
 ### Patch Changes
 
 - docs: update README
 
-## 1.0.0
+## 1.0.0 🎉
 
 ### Major Changes
 
