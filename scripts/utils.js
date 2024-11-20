@@ -68,8 +68,9 @@ export function getLibPath(libName) {
  * @param {string} libName 模块名
  * @returns {Promise}
  */
-export async function readPackage(pkgPath) {
-	return await readJSON(path.join(pkgPath, 'package.json'))
+export async function readPackage(libName) {
+	const libPath = libName.includes('/') ? libName : getLibPath(libName)
+	return await readJSON(path.join(libPath, 'package.json'))
 }
 
 /**

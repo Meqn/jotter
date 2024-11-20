@@ -117,7 +117,7 @@ function sortLogsByType(logs) {
 function updateChangelog(content, version, logs) {
 	const [v1, v2, v3] = version.split('.')
 	const regex = new RegExp(`## ${v1}\\.${v2}\\.${v3}[\\s]*### (Patch|Minor|Major) Changes\\n`)
-	logStr = sortLogsByType(logs).join('\n')
+	const logStr = sortLogsByType(logs).join('\n')
 
 	return content
 		.replace(regex, (match, p1) => {
