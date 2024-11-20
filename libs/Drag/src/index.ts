@@ -256,3 +256,4 @@ class Drag {
 }
 
 export default Drag
+export * from './types'

@@ -2,18 +2,19 @@
 	"name": "@jotter/drag",
 	"version": "1.0.1",
 	"description": "A lightweight, flexible drag-and-drop library for making DOM elements draggable with mouse and touch support.",
+	"type": "module",
 	"main": "dist/index.js",
-	"module": "dist/index.mjs",
 	"unpkg": "dist/index.min.js",
 	"jsdelivr": "dist/index.min.js",
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
-			"require": "./dist/index.js",
-			"import": "./dist/index.esm.js",
-			"types": "./dist/index.d.ts"
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"module": "./dist/index.js",
+			"require": "./dist/index.cjs"
 		},
-		"./*": "./*"
+		"./*": "./dist/*"
 	},
 	"files": [
 		"dist"
@@ -23,7 +24,8 @@
 		"target": [
 			"es2015",
 			"es5"
-		]
+		],
+		"clean": true
 	},
 	"keywords": [
 		"drag-and-drop",
@@ -32,14 +34,15 @@
 		"drop",
 		"touch"
 	],
-	"homepage": "https://github.com/Meqn/jotter/tree/main/libs/drag",
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/drag",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Meqn/jotter.git"
+		"url": "git+https://github.com/Marinerer/jotter.git",
+		"directory": "libs/Drag"
 	},
-	"author": "lmq <mengqing723@gmail.com>",
+	"author": "Mariner <mengqing723@gmail.com>",
 	"license": "MIT",
 	"bugs": {
-		"url": "https://github.com/Meqn/jotter/issues"
+		"url": "https://github.com/Marinerer/jotter/issues"
 	}
 }

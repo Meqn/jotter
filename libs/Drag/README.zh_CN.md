@@ -1,10 +1,11 @@
 # Draggable
 
 [![version](https://img.shields.io/npm/v/@jotter/drag?style=flat-square)](https://www.npmjs.com/package/@jotter/drag)
+[![codecov](https://codecov.io/gh/Marinerer/jotter/graph/badge.svg?token=G7QXEHCEXW)](https://codecov.io/gh/Marinerer/jotter)
 [![downloads](https://img.shields.io/npm/dm/@jotter/drag?style=flat-square)](https://www.npmjs.com/package/@jotter/drag)
 [![size](https://img.shields.io/bundlephobia/minzip/@jotter/drag?style=flat-square)](https://bundlephobia.com/package/@jotter/drag)
 ![ES5](https://img.shields.io/badge/Supports-ES5-brightgreen?style=flat-square)
-[![license](https://img.shields.io/npm/l/@jotter/drag?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/Drag)
+[![license](https://img.shields.io/npm/l/@jotter/drag?style=flat-square)](https://github.com/Marinerer/jotter/blob/main/libs/Drag)
 
 [ [English](README.md) | [中文](./README.zh_CN.md) ]
 
