@@ -1,6 +1,6 @@
 {
 	"name": "@jotter/position",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"description": "Positioning a DOM element relative to another DOM element.",
 	"type": "module",
 	"main": "dist/index.js",
