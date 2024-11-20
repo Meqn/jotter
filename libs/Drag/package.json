@@ -1,6 +1,6 @@
 {
 	"name": "@jotter/drag",
-	"version": "1.0.1",
+	"version": "2.0.0",
 	"description": "A lightweight, flexible drag-and-drop library for making DOM elements draggable with mouse and touch support.",
 	"type": "module",
 	"main": "dist/index.js",
