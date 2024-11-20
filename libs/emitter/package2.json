@@ -1,0 +1,47 @@
+{
+	"name": "@jotter/emitter",
+	"version": "1.1.2",
+	"description": "Simple and modern emitter library.",
+	"main": "dist/index.js",
+	"module": "dist/index.esm.js",
+	"unpkg": "dist/index.global.js",
+	"jsdelivr": "dist/index.global.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"require": "./dist/index.js",
+			"import": "./dist/index.esm.js",
+			"types": "./dist/index.d.ts"
+		},
+		"./*": "./*"
+	},
+	"files": ["dist"],
+	"scripts": {
+		"clean": "rimraf -rf ./dist",
+		"build:rollup": "npm run clean && NODE_ENV=production rollup -c rollup.config.mjs",
+		"test": "jest"
+	},
+	"keywords": [
+		"event",
+		"events",
+		"emitter",
+		"pubsub",
+		"listener",
+		"on",
+		"once",
+		"emit",
+		"trigger",
+		"dispatchEvent",
+		"addEventListener",
+		"event emitter",
+		"event bus"
+	],
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/emitter",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Marinerer/jotter.git"
+	},
+	"author": "lmq <mengqing723@gmail.com>",
+	"license": "MIT",
+	"devDependencies": {}
+}
