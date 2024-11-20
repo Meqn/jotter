@@ -2,26 +2,27 @@
 	"name": "@jotter/animator",
 	"version": "1.0.3",
 	"description": "Animator is an animation playback controller. It makes it easy to create and control JavaScript animations.",
+	"type": "module",
 	"main": "dist/index.js",
-	"module": "dist/index.mjs",
 	"unpkg": "dist/index.min.js",
 	"jsdelivr": "dist/index.min.js",
 	"types": "dist/index.d.ts",
 	"exports": {
 		".": {
-			"require": "./dist/index.js",
-			"import": "./dist/index.esm.js",
-			"types": "./dist/index.d.ts"
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"module": "./dist/index.js",
+			"require": "./dist/index.cjs"
 		},
-		"./*": "./*"
+		"./*": "./dist/*"
 	},
 	"files": [
 		"dist"
 	],
-	"scripts": {
-		"clean": "rimraf -rf ./dist",
-		"build": "pnpm run clean && NODE_ENV=production rollup -c rollup.config.mjs",
-		"test": "jest"
+	"buildOptions": {
+		"name": "Animator",
+		"target": "es2015",
+		"clean": true
 	},
 	"keywords": [
 		"animator",
@@ -37,11 +38,12 @@
 		"registry": "https://registry.npmjs.org"
 	},
 	"sideEffects": false,
-	"homepage": "https://github.com/Meqn/jotter/tree/main/libs/animator",
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/animator",
 	"repository": {
 		"type": "git",
-		"url": "git+https://github.com/Meqn/jotter.git"
+		"url": "git+https://github.com/Marinerer/jotter.git",
+		"directory": "libs/Animator"
 	},
-	"author": "lmq <mengqing723@gmail.com>",
+	"author": "Mariner <mengqing723@gmail.com>",
 	"license": "MIT"
 }

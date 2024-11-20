@@ -1,9 +1,10 @@
 # Animator
 
 [![version](https://img.shields.io/npm/v/@jotter/animator?style=flat-square)](https://www.npmjs.com/package/@jotter/animator)
+[![codecov](https://codecov.io/gh/Marinerer/jotter/graph/badge.svg?token=G7QXEHCEXW)](https://codecov.io/gh/Marinerer/jotter)
 [![downloads](https://img.shields.io/npm/dm/@jotter/animator?style=flat-square)](https://www.npmjs.com/package/@jotter/animator)
 [![size](https://img.shields.io/bundlephobia/minzip/@jotter/animator?style=flat-square)](https://bundlephobia.com/package/@jotter/animator)
-[![license](https://img.shields.io/npm/l/@jotter/animator?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/Animator)
+[![license](https://img.shields.io/npm/l/@jotter/animator?style=flat-square)](https://github.com/Marinerer/jotter/blob/main/libs/Animator)
 
 [ [English](README.md) | [中文](README.zh_CN.md) ]
 
