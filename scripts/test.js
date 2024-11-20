@@ -1,9 +1,8 @@
 import { execSync } from 'node:child_process'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-
 import minimist from 'minimist'
-import { BUILD_LIB_DIR } from './const.js'
+import { modulesMap } from './utils.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
@@ -27,27 +26,25 @@ function argsToString(args) {
 }
 
 // run tests for specific path
-function runTests(libPath) {
+function runTests(testPath) {
 	try {
-		console.log(`Running tests for ${path.basename(libPath)}...`)
+		console.log(`Running tests for ${testPath}...`)
 		const testArgs = argsToString(args)
 		// `--experimental-vm-modules` is required for esm
-		execSync(
-			`cross-env NODE_OPTIONS="--experimental-vm-modules" npx jest "${libPath}" ${testArgs}`,
-			{
-				stdio: 'inherit',
-			}
-		)
+		execSync(`npx jest "${testPath}" ${testArgs}`, {
+			stdio: 'inherit',
+		})
 	} catch (error) {
-		console.error(`Tests failed for ${path.basename(libPath)}`)
+		console.error(`Tests failed for ${testPath}`)
 		process.exit(1)
 	}
 }
 
 // Run tests for specific libs
 const libs = args._
-let testPath = path.join(process.cwd(), BUILD_LIB_DIR)
+let testPath = '.*\\.(test|spec)\\.[tj]s$'
 if (libs.length) {
-	testPath = `${BUILD_LIB_DIR}/(${libs.join('|')})/.*\\.(test|spec)\\.[tj]s$`
+	const libsPath = libs.map((lib) => modulesMap[lib]).join('|')
+	testPath = `(${libsPath})/.*\\.(test|spec)\\.[tj]s$`
 }
 runTests(testPath)

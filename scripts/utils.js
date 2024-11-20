@@ -1,16 +1,42 @@
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import fs from 'node:fs/promises'
-import { promisify } from 'node:util'
-import simpleGit from 'simple-git'
+import fg from 'fast-glob'
 
-import { BUILD_LIB_DIR } from './const.js'
+import { BUILD_MODULES } from './const.js'
 
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 export const __rootDir = path.join(__dirname, '../')
 
-const git = simpleGit()
+/**
+ * 所有模块及对应路径
+ */
+export const modulesMap = fg.sync(BUILD_MODULES, { absolute: false }).reduce((acc, cur) => {
+	const arr = cur.split('/')
+	if (arr.length === 3) {
+		acc[arr[1]] = arr.slice(0, 2).join('/')
+	}
+	return acc
+}, {})
+
+/**
+ * 过滤对象属性
+ *
+ * @param {object} obj 对象
+ * @param {string[]} keys 过滤的属性
+ * @returns {object}
+ */
+export function omit(obj, keys) {
+	const result = {}
+	keys = [].concat(keys)
+	for (const key in obj) {
+		if (!keys.includes(key)) {
+			result[key] = obj[key]
+		}
+	}
+	return result
+}
 
 /**
  * 读取 JSON 文件
@@ -30,7 +56,10 @@ export async function readJSON(path) {
  * @returns {string}
  */
 export function getLibPath(libName) {
-	return path.join(__rootDir, BUILD_LIB_DIR, libName)
+	if (!libName || !modulesMap[libName]) {
+		throw new Error(`Modules "${libName}" not found.`)
+	}
+	return path.join(__rootDir, modulesMap[libName])
 }
 
 /**
@@ -79,59 +108,8 @@ export function generateBanner(pkg) {
 	return (
 		'/*!\n' +
 		` * ${pkg.name} v${pkg.version}\n` +
-		` * Copyright (c) ${new Date().getFullYear()} Mervin<mengqing723@gmail.com>\n` +
+		` * Copyright (c) ${new Date().getFullYear()} Mariner<mengqing723@gmail.com>\n` +
 		` * Released under the ${pkg.license} License.\n` +
 		' */'
 	)
-}
-
-/**
- * 从指定 commit Id 获取所有最新记录
- * @param {string} tagId 提交记录Id
- * @returns
- */
-export async function getCommitsSince(commitId) {
-	const log = promisify(git.log.bind(git))
-	const logOptions = {
-		from: commitId,
-	}
-
-	try {
-		const commitLogs = await log(logOptions)
-		return commitLogs.all
-	} catch (error) {
-		console.error('Error fetching commit logs:', error.message)
-		throw error
-	}
-}
-
-/**
- * 从指定 标签Id 获取所有最新记录
- * @param {string} tagId 标签 ID
- * @returns
- */
-export async function getCommitsSinceTag(tagId) {
-	const tags = promisify(git.tags.bind(git))
-	const log = promisify(git.log.bind(git))
-
-	if (!tagId) {
-		tagId = (await tags()).latest
-	}
-
-	if (!tagId) {
-		console.error('No tags found.')
-		return []
-	}
-
-	const logOptions = {
-		from: tagId,
-	}
-
-	try {
-		const commitLogs = await log(logOptions)
-		return commitLogs.all
-	} catch (error) {
-		console.error('Error fetching commit logs:', error.message)
-		throw error
-	}
 }
