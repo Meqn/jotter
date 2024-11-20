@@ -8,7 +8,7 @@ env:
   CI: true
   NODE_AUTH_TOKEN: ${{ secrets.NPM_ACCESS_TOKEN }}
   PNPM_CACHE_FOLDER: .pnpm-store
-  PKG_RELEASE_KEY: lastReleaseCommit # 定义 package.json 最后发布的key
+  PKG_RELEASE_KEY: lastReleaseCommit
 jobs:
   release:
     # prevents this action from running on forks
@@ -19,14 +19,13 @@ jobs:
       - name: checkout code repository
         uses: actions/checkout@v4
         with:
-          # This makes Actions fetch all Git history so that Changesets can generate changelogs with the correct commits
           fetch-depth: 0
-          persist-credentials: true # 允许在工作流中使用 GitHub 令牌
+          persist-credentials: true
 
       - name: Install pnpm
         uses: pnpm/action-setup@v4
         with:
-          version: 9
+          version: 8
           run_install: false
 
       - name: Setup Node.js

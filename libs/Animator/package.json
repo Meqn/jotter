@@ -21,8 +21,7 @@
 	],
 	"buildOptions": {
 		"name": "Animator",
-		"target": "es2015",
-		"clean": true
+		"target": "es2015"
 	},
 	"keywords": [
 		"animator",
@@ -35,6 +34,8 @@
 	],
 	"publishConfig": {
 		"access": "public",
+		"scope": "@jotter",
+		"tag": "latest",
 		"registry": "https://registry.npmjs.org"
 	},
 	"sideEffects": false,

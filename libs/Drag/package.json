@@ -24,8 +24,7 @@
 		"target": [
 			"es2015",
 			"es5"
-		],
-		"clean": true
+		]
 	},
 	"keywords": [
 		"drag-and-drop",
@@ -34,6 +33,13 @@
 		"drop",
 		"touch"
 	],
+	"publishConfig": {
+		"access": "public",
+		"scope": "@jotter",
+		"tag": "latest",
+		"registry": "https://registry.npmjs.org"
+	},
+	"sideEffects": false,
 	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/drag",
 	"repository": {
 		"type": "git",
