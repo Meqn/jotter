@@ -58,6 +58,7 @@ function generateOutputs(config, options) {
 				name: config.name,
 				banner,
 				globals: config.globals,
+				sourcemap: PROD,
 				plugins: PROD && minify ? [terser()] : [],
 			})
 		} else {
