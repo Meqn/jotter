@@ -10,8 +10,8 @@
 
 | Package                                                                             | Status                                                                              |
 | ----------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------- |
-| [@jotter/animator](https://github.com/Marinerer/jotter/tree/main/libs/animator)     | Animator is an animation playback controller.                                       |
-| [@jotter/drag](https://github.com/Marinerer/jotter/tree/main/libs/drag)             | Lightweight "drag-and-drop" library of draggable elements within a specified range. |
+| [@jotter/animator](https://github.com/Marinerer/jotter/tree/main/libs/Animator)     | Animator is an animation playback controller.                                       |
+| [@jotter/drag](https://github.com/Marinerer/jotter/tree/main/libs/Drag)             | Lightweight "drag-and-drop" library of draggable elements within a specified range. |
 | [@jotter/emitter](https://github.com/Marinerer/jotter/tree/main/libs/emitter)       | Simple and modern event emitter library.                                            |
 | [@jotter/websocket](https://github.com/Marinerer/jotter/tree/main/libs/websocket)   | Modern and useful WebSocket wrapper, with standard WebSocket API.                   |
 | [@jotter/dateformat](https://github.com/Marinerer/jotter/tree/main/libs/dateFormat) | a date/time formatting function.                                                    |
