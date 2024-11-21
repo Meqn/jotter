@@ -1,5 +1,11 @@
 # @jotter/drag
 
+## 2.0.1
+
+### Patch Changes 🌟
+
+- Add sourcemap
+
 ## 2.0.0
 
 ### Major Changes 🎉

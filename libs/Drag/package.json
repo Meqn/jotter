@@ -1,6 +1,6 @@
 {
 	"name": "@jotter/drag",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "A lightweight, flexible drag-and-drop library for making DOM elements draggable with mouse and touch support.",
 	"type": "module",
 	"main": "dist/index.js",
@@ -35,8 +35,6 @@
 	],
 	"publishConfig": {
 		"access": "public",
-		"scope": "@jotter",
-		"tag": "latest",
 		"registry": "https://registry.npmjs.org"
 	},
 	"sideEffects": false,

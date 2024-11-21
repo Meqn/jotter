@@ -1,6 +1,6 @@
 {
 	"name": "@jotter/animator",
-	"version": "2.0.0",
+	"version": "2.0.1",
 	"description": "Animator is an animation playback controller. It makes it easy to create and control JavaScript animations.",
 	"type": "module",
 	"main": "dist/index.js",
@@ -34,8 +34,6 @@
 	],
 	"publishConfig": {
 		"access": "public",
-		"scope": "@jotter",
-		"tag": "latest",
 		"registry": "https://registry.npmjs.org"
 	},
 	"sideEffects": false,
