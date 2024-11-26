@@ -35,7 +35,7 @@
 	"engines": {
 		"node": ">=18.0.0"
 	},
-	"lastReleaseCommit": "5dfc015a62ad9da89f0dab84fe8ede4c72d78dc0",
+	"lastReleaseCommit": "467f968739d9869784f030e7590a3aca36f45325",
 	"publishConfig": {
 		"access": "public",
 		"registry": "https://registry.npmjs.org/"
