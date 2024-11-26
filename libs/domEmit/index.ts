@@ -48,7 +48,10 @@ class DomEmitter<T extends Record<string, any>> {
 	/**
 	 * 创建自定义事件
 	 */
-	private createEvent<K extends keyof T>(type: K, options: CustomEventOptions = {}): CustomEvent {
+	private createEvent<K extends keyof T>(
+		type: K,
+		eventInitDict: CustomEventOptions = {}
+	): CustomEvent {
 		if (typeof type !== 'string') {
 			throw new TypeError(`[${DomEmitter.name}] eventType must be a string`)
 		}
@@ -60,7 +63,7 @@ class DomEmitter<T extends Record<string, any>> {
 			detail: null,
 		}
 
-		const eventOptions = assign(defaults, options)
+		const eventOptions = assign(defaults, eventInitDict)
 
 		// 使用现代浏览器API
 		if (typeof CustomEvent === 'function') {
@@ -142,7 +145,7 @@ class DomEmitter<T extends Record<string, any>> {
 		}
 
 		// 触发通过赋值绑定的事件
-		const onHandler = this[`on${String(event.type)}`]
+		const onHandler = this[`on${String(event.type)}`] //不处理元素上的事件 this._eventTarget[onType as keyof HTMLElement]
 		if (typeof onHandler === 'function') {
 			onHandler.call(this._eventTarget, event)
 		}
@@ -203,14 +206,14 @@ class DomEmitter<T extends Record<string, any>> {
 	/**
 	 * 检查是否存在事件监听器
 	 */
-	has(type: string, includeOn = false): boolean {
+	has(type: string, includeOn?: boolean): boolean {
 		return this.size(type, includeOn) > 0
 	}
 
 	/**
 	 * 获取事件监听器数量
 	 */
-	size(type: string, includeOn = false): number {
+	size(type: string, includeOn?: boolean): number {
 		const handlerCount = includeOn && typeof this[`on${type}`] === 'function' ? 1 : 0
 		return (this._events?.[type]?.length || 0) + handlerCount
 	}
