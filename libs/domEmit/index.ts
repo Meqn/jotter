@@ -141,6 +141,12 @@ class DomEmitter<T extends Record<string, any>> {
 			assign(event, data)
 		}
 
+		// 触发通过赋值绑定的事件
+		const onHandler = this[`on${String(event.type)}`]
+		if (typeof onHandler === 'function') {
+			onHandler.call(this._eventTarget, event)
+		}
+
 		return this._eventTarget.dispatchEvent(event)
 	}
 
@@ -174,10 +180,9 @@ class DomEmitter<T extends Record<string, any>> {
 		listener: CustomEventListener,
 		options?: boolean | EventListenerOptions
 	): this {
-		// 修复上下文绑定问题
 		const onceListener = (event: CustomEvent) => {
 			this.removeEventListener(type, onceListener, options)
-			listener.call(null, event)
+			listener.call(this._eventTarget, event)
 		}
 
 		return this.addEventListener(type, onceListener, options)
@@ -192,13 +197,6 @@ class DomEmitter<T extends Record<string, any>> {
 	 */
 	emit<K extends keyof T>(type: K, detail?: any, data?: Partial<T[K]>): boolean {
 		const event = this.createEvent(type, { detail })
-
-		// 触发通过赋值绑定的事件
-		const onHandler = this[`on${String(type)}`]
-		if (typeof onHandler === 'function') {
-			onHandler.call(null, event)
-		}
-
 		return this.dispatchEvent<K>(event, data)
 	}
 
