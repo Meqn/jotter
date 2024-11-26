@@ -1,5 +1,11 @@
 # dom-event-emit
 
+## 1.1.0
+
+### Minor Changes 🚀
+
+- refactor: Replace static name with const _NAME ([f86d02b](https://github.com/Marinerer/jotter/commit/f86d02ba3207d6e53a50ebb743d6feeb4e69dc7e))
+
 ## 1.0.1
 
 ### Patch Changes 🌟
