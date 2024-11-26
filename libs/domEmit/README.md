@@ -128,7 +128,7 @@ has(type: string, includeOn = false): boolean
 
 Checks if an event type has any listeners.
 
-### `size`
+#### `size`
 
 ```typescript
 size(type: string, includeOn = false): number
@@ -136,7 +136,7 @@ size(type: string, includeOn = false): number
 
 Gets the number of listeners for an event type.
 
-### `clear`
+#### `clear`
 
 ```typescript
 clear(type?: string): void
@@ -144,7 +144,7 @@ clear(type?: string): void
 
 Clears all listeners for a specific event type or all events.
 
-### `destroy`
+#### `destroy`
 
 ```typescript
 destroy(): void
