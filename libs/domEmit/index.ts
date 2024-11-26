@@ -214,7 +214,7 @@ class DomEmitter<T extends Record<string, any>> {
 	 */
 	size(type: string, includeOn = false): number {
 		const handlerCount = includeOn && typeof this[`on${type}`] === 'function' ? 1 : 0
-		return (this._events[type]?.length || 0) + handlerCount
+		return (this._events?.[type]?.length || 0) + handlerCount
 	}
 
 	/**
