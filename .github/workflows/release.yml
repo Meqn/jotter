@@ -40,7 +40,7 @@ jobs:
 
       - name: CI:test
         run: |
-          pnpm test domEmit -- --coverage
+          pnpm test domEmit emitter -- --coverage
 
       - name: CI:build
         run: pnpm build --clean
