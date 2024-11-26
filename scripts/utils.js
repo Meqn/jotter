@@ -69,7 +69,7 @@ export function getLibPath(libName) {
  * @returns {Promise}
  */
 export async function readPackage(libName) {
-	const libPath = libName.includes('/') ? libName : getLibPath(libName)
+	const libPath = libName.includes(path.sep) ? libName : getLibPath(libName)
 	return await readJSON(path.join(libPath, 'package.json'))
 }
 
