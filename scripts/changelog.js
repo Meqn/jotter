@@ -168,7 +168,7 @@ async function pushVersionChanges() {
 
 function printHelp() {
 	const output = [
-		logger.colors.blue('Usage: pnpm changelog <lib-name> [options]'),
+		logger.colors.blue('Usage: pnpm changelog [lib-name] [options]'),
 		'',
 		'Options:',
 		'  --tag            Get commits starting from specified tag',
@@ -188,6 +188,12 @@ function printHelp() {
 ;(async () => {
 	if (args.help) {
 		return printHelp()
+	}
+
+	// 无模块时, 仅执行 `git push` 操作
+	if (args._.length === 0 && args.push) {
+		await pushVersionChanges()
+		return
 	}
 
 	try {
@@ -221,7 +227,7 @@ function printHelp() {
 			logger.tag.warn('\n' + value.join('\n'), key)
 		})
 
-		// 自动生成变更日志
+		// 有模块时, 自动生成变更日志
 		if (args._.length) {
 			for (const name of args._) {
 				await generateLogs(name, formattedCommits)

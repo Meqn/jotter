@@ -109,7 +109,7 @@ async function buildLib(libName) {
 
 function printHelp() {
 	const output = [
-		colors.blue('Usage: pnpm build <lib-name> [options]'),
+		colors.blue('Usage: pnpm build [lib-name] [options]'),
 		'',
 		'If `package.json` includes `scripts.build`, run `build` command; Otherwise, run `rollup` build.',
 		'',
