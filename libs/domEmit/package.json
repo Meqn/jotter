@@ -1,0 +1,50 @@
+{
+	"name": "dom-event-emit",
+	"version": "0.0.0",
+	"description": "A type-safe, flexible DOM event emitter for browser environments. It has the same event API as DOM elements.",
+	"type": "module",
+	"main": "dist/index.js",
+	"unpkg": "dist/index.min.js",
+	"jsdelivr": "dist/index.min.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"module": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./*": "./dist/*"
+	},
+	"files": [
+		"dist"
+	],
+	"buildOptions": {
+		"name": "DomEmitter",
+		"input": "index.ts",
+		"target": "es5"
+	},
+	"keywords": [
+		"event-emitter",
+		"dom event",
+		"element event",
+		"event",
+		"emitter"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	},
+	"sideEffects": false,
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/domEmit",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Marinerer/jotter.git",
+		"directory": "libs/domEmit"
+	},
+	"author": "Mariner <mengqing723@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Marinerer/jotter/issues"
+	}
+}
