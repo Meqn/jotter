@@ -13,8 +13,16 @@ A type-safe, flexible DOM event emitter for browser environments. It has the sam
 
 ## Installation
 
+**npm**
+
 ```bash
 npm install dom-event-emit
+```
+
+**browser**
+
+```
+https://cdn.jsdelivr.net/npm/dom-event-emit/dist/index.min.js
 ```
 
 ## Quick Start

@@ -1,3 +1,5 @@
+const _NAME = 'DomEmitter'
+
 // 事件监听器类型
 type CustomEventListener<T = any> = (event: CustomEvent<T>) => void
 
@@ -31,15 +33,13 @@ function assign<T extends object, U extends object>(target: T, source: U): T & U
  * 用于管理DOM事件的订阅、发布和移除
  */
 class DomEmitter<T extends Record<string, any>> {
-	static readonly name = 'DomEmitter'
-
 	private _events: EventsMap<T> = Object.create(null) // 事件存储对象
 	private _eventTarget: HTMLElement; // 事件目标对象
 	[key: string]: any // 用于支持 onxxx 属性
 
 	constructor(target?: HTMLElement) {
 		if (typeof document === 'undefined') {
-			throw new Error(`${DomEmitter.name} can only be used in browser environment`)
+			throw new Error(`${_NAME} can only be used in browser environment`)
 		}
 
 		this._eventTarget = target instanceof HTMLElement ? target : document.createElement('div')
@@ -53,7 +53,7 @@ class DomEmitter<T extends Record<string, any>> {
 		eventInitDict: CustomEventOptions = {}
 	): CustomEvent {
 		if (typeof type !== 'string') {
-			throw new TypeError(`[${DomEmitter.name}] eventType must be a string`)
+			throw new TypeError(`[${_NAME}] eventType must be a string`)
 		}
 
 		const defaults: CustomEventOptions = {
@@ -94,10 +94,10 @@ class DomEmitter<T extends Record<string, any>> {
 		options?: boolean | AddEventListenerOptions
 	): this {
 		if (typeof type !== 'string' || type === '') {
-			throw new TypeError(`[${DomEmitter.name}] eventType must be a string`)
+			throw new TypeError(`[${_NAME}] eventType must be a string`)
 		}
 		if (typeof listener !== 'function') {
-			throw new TypeError(`[${DomEmitter.name}] listener must be a function`)
+			throw new TypeError(`[${_NAME}] listener must be a function`)
 		}
 
 		this._eventTarget.addEventListener(type, listener as EventListener, options)
@@ -116,7 +116,7 @@ class DomEmitter<T extends Record<string, any>> {
 		options?: boolean | EventListenerOptions
 	): this {
 		if (typeof type !== 'string' || type === '') {
-			throw new TypeError(`[${DomEmitter.name}] eventType must be a string`)
+			throw new TypeError(`[${_NAME}] eventType must be a string`)
 		}
 
 		this._eventTarget.removeEventListener(type, listener as EventListener, options)
@@ -137,7 +137,7 @@ class DomEmitter<T extends Record<string, any>> {
 	 */
 	dispatchEvent<K extends keyof T>(event: Event, data?: Partial<T[K]>): boolean {
 		if (!(event instanceof Event)) {
-			throw new TypeError(`[${DomEmitter.name}] event must be an instance of Event`)
+			throw new TypeError(`[${_NAME}] event must be an instance of Event`)
 		}
 
 		if (data) {
