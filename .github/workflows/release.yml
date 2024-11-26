@@ -40,7 +40,7 @@ jobs:
 
       - name: CI:test
         run: |
-          pnpm test Drag -- --coverage
+          pnpm test domEmit -- --coverage
 
       - name: CI:build
         run: pnpm build --clean
