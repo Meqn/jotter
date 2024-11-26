@@ -1,6 +1,6 @@
 {
 	"name": "dom-event-emit",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "A type-safe, flexible DOM event emitter for browser environments. It has the same event API as DOM elements.",
 	"type": "module",
 	"main": "dist/index.js",
@@ -26,7 +26,7 @@
 	},
 	"keywords": [
 		"event-emitter",
-		"dom event",
+		"dom event emitter",
 		"element event",
 		"event",
 		"emitter"
