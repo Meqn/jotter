@@ -2,8 +2,8 @@ import { WebSocketConnectEventMap } from './types'
 const eventTypes = ['close', 'error', 'message', 'open', 'reconnect', 'reconnectend'] as const
 
 export class WebSocketConnectEvent {
-	protected _ws: WebSocket | null = null
-	protected _evt: HTMLElement
+	ws: WebSocket | null = null
+	protected _e: HTMLElement
 
 	onclose: ((ev: WebSocketConnectEventMap['close']) => any) | null = null
 	onerror: ((ev: WebSocketConnectEventMap['error']) => any) | null = null
@@ -13,13 +13,13 @@ export class WebSocketConnectEvent {
 	onreconnectend: ((ev: WebSocketConnectEventMap['reconnectend']) => any) | null = null
 
 	constructor() {
-		this._evt = document.createElement('div')
+		this._e = document.createElement('div')
 
 		eventTypes.forEach((type) => {
 			// 通过赋值绑定的事件
-			this._evt.addEventListener(type, (ev) => {
+			this._e.addEventListener(type, (ev) => {
 				// @ts-ignore
-				this[`on${type}`]?.call(this._ws || this._evt, ev)
+				this[`on${type}`]?.call(this.ws || this._e, ev)
 			})
 		})
 	}
@@ -29,7 +29,7 @@ export class WebSocketConnectEvent {
 		listener: (ev: WebSocketConnectEventMap[K]) => any,
 		options?: boolean | AddEventListenerOptions
 	): void {
-		this._evt.addEventListener.call(this._ws || this._evt, type, listener as EventListener, options)
+		this._e.addEventListener(type, listener as EventListener, options)
 	}
 
 	removeEventListener<K extends keyof WebSocketConnectEventMap>(
@@ -37,17 +37,12 @@ export class WebSocketConnectEvent {
 		listener: (ev: WebSocketConnectEventMap[K]) => any,
 		options?: boolean | EventListenerOptions
 	): void {
-		this._evt.removeEventListener.call(
-			this._ws || this._evt,
-			type,
-			listener as EventListener,
-			options
-		)
+		this._e.removeEventListener(type, listener as EventListener, options)
 	}
 
 	dispatchEvent<K extends keyof WebSocketConnectEventMap>(
 		event: WebSocketConnectEventMap[K]
 	): boolean {
-		return this._evt.dispatchEvent(event)
+		return this._e.dispatchEvent(event)
 	}
 }
