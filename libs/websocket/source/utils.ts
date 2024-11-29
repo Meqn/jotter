@@ -1,14 +1,27 @@
 import { WsMessageEvent } from './types'
 
-// 无效的 message数据类型
-export const invalidMessageType = ['number', 'boolean', 'array', 'object']
-
 export function getType(value: any): string {
 	return Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
 }
 
 export function isObject(value: any): boolean {
 	return getType(value) === 'object'
+}
+
+/**
+ * 检测是否有效的 message 数据类型
+ */
+export function validWsData(data: any): boolean {
+	if (typeof data === 'string') return true
+	if (typeof data === 'object') {
+		return (
+			data instanceof ArrayBuffer ||
+			data instanceof Blob ||
+			data instanceof DataView ||
+			ArrayBuffer.isView(data)
+		)
+	}
+	return false
 }
 
 /**
@@ -23,7 +36,7 @@ interface IAssign {
 export const assign: IAssign = (() => {
 	return (
 		Object.assign ||
-		function (target, ...sources) {
+		function (target: { [key: string]: any }, ...sources: any[]) {
 			for (let i = 1, len = sources.length; i < len; i++) {
 				const source = sources[i]
 				for (const key in source) {
@@ -36,7 +49,9 @@ export const assign: IAssign = (() => {
 	)
 })()
 
-// 创建自定义事件
+/**
+ * 创建自定义事件
+ */
 export function createEvent<K extends string>(
 	type: K,
 	source?: K extends 'message' | 'close' ? WebSocketEventMap[K] : Event,

@@ -24,7 +24,7 @@ export class ReconnectManager {
 			const delayTime = typeof delay === 'function' ? delay(this.attempt) : delay
 			this._timer = window.setTimeout(() => {
 				//重连处理
-				reconnect?.(this.attempt)
+				reconnect && reconnect(this.attempt)
 				this.attempt++
 			}, delayTime)
 		} else {
@@ -32,7 +32,7 @@ export class ReconnectManager {
 			this.stop()
 
 			//重连结束处理
-			reconnectEnd?.(this.attempt)
+			reconnectEnd && reconnectEnd(this.attempt)
 		}
 	}
 

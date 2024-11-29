@@ -2,7 +2,7 @@ import { MessageQueueOptions } from './types'
 
 /**
  * 消息队列管理器
- * 1. `onopen` 中处理消息队列;
+ * 1. `onopen` 中消费消息队列;
  * 2. `send()` 未连接状态时保存待发送的消息;
  */
 export class QueueManager {

@@ -2,36 +2,52 @@ import { WebSocketConnectEvent } from './event'
 import { ReconnectManager } from './reconnect'
 import { PingManager } from './ping'
 import { QueueManager } from './queue'
-import { getType, isObject, assign, invalidMessageType, createEvent } from './utils'
+import { isObject, assign, validWsData, createEvent } from './utils'
 import {
 	IOptions,
-	WebSocketConfig,
+	WebSocketOptions,
 	ReconnectOptions,
 	PingOptions,
 	MessageQueueOptions,
 } from './types'
 
-const defaults: Omit<WebSocketConfig, 'url'> = {
-	protocols: [],
-	reconnect: {
-		enabled: true,
-		delay: (attempt) => Math.min(2000 * Math.pow(1.2, attempt), 30000), //指数退避算法
-		maxAttempts: 10,
-	},
-	ping: {
-		enabled: true,
-		interval: 3000,
-	},
-	messageQueue: {
-		enabled: true,
-		max: Infinity,
-	},
+function createOptions(url: string, options: IOptions): WebSocketOptions {
+	const defaults: Omit<WebSocketOptions, 'url'> = {
+		protocols: [],
+		reconnect: {
+			enabled: true,
+			delay: (attempt) => Math.min(2000 * Math.pow(1.2, attempt), 30000), //指数退避算法
+			maxAttempts: 10,
+		},
+		ping: {
+			enabled: true,
+			interval: 3000,
+		},
+		messageQueue: {
+			enabled: true,
+			max: Infinity,
+		},
+	}
+
+	const { reconnect, messageQueue, ping } = options
+
+	options.reconnect = reconnect
+		? assign({}, defaults.reconnect, isObject(reconnect) ? reconnect : {})
+		: { enabled: false }
+
+	options.messageQueue = messageQueue
+		? assign({}, defaults.messageQueue, isObject(messageQueue) ? messageQueue : {})
+		: { enabled: false }
+
+	options.ping = ping ? assign({}, defaults.ping, isObject(ping) ? ping : {}) : { enabled: false }
+
+	return assign({}, defaults, options, { url })
 }
 
 class WebSocketConnect extends WebSocketConnectEvent {
 	ws: WebSocket | null = null
 
-	private _opt: WebSocketConfig
+	private _opt: WebSocketOptions
 	private _manualClose: boolean = false // 手动关闭
 	private _r: ReconnectManager //reconnect 实例
 	private _q: QueueManager //messageQueue 实例
@@ -53,30 +69,32 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		if (protocols) {
 			options = isObject(protocols) ? (protocols as IOptions) : assign(options || {}, { protocols })
 		}
-		if (options) {
-			const { reconnect, messageQueue, ping } = options
-
-			options.reconnect = reconnect
-				? assign({}, defaults.reconnect, isObject(reconnect) ? reconnect : {})
-				: { enabled: false }
-
-			options.messageQueue = messageQueue
-				? assign({}, defaults.messageQueue, isObject(messageQueue) ? messageQueue : {})
-				: { enabled: false }
-
-			options.ping = ping
-				? assign({}, defaults.ping, isObject(ping) ? ping : {})
-				: { enabled: false }
-		}
-		this._opt = assign({}, defaults, options || {}, { url })
+		this._opt = createOptions(url, options || {})
 
 		// 初始化管理器
 		this._r = new ReconnectManager(this._opt.reconnect as ReconnectOptions)
 		this._q = new QueueManager(this._opt.messageQueue as MessageQueueOptions)
-		this._p = new PingManager(this._opt.ping as PingOptions, this.send.bind(this))
+		this._p = new PingManager(this._opt.ping as PingOptions, (d) => this.send(d))
 
 		// 初始化 WebSocket 连接
 		this._connect()
+	}
+
+	static readonly CONNECTING = WebSocket.CONNECTING
+	static readonly OPEN = WebSocket.OPEN
+	static readonly CLOSING = WebSocket.CLOSING
+	static readonly CLOSED = WebSocket.CLOSED
+	get CONNECTING() {
+		return WebSocketConnect.CONNECTING
+	}
+	get OPEN() {
+		return WebSocketConnect.OPEN
+	}
+	get CLOSING() {
+		return WebSocketConnect.CLOSING
+	}
+	get CLOSED() {
+		return WebSocketConnect.CLOSED
 	}
 
 	get bufferedAmount() {
@@ -89,8 +107,14 @@ class WebSocketConnect extends WebSocketConnectEvent {
 	set binaryType(value: BinaryType) {
 		this.ws!.binaryType = value
 	}
+	get extensions() {
+		return this.ws!.extensions
+	}
 	get protocol() {
 		return this.ws?.protocol
+	}
+	get readyState() {
+		return this.ws?.readyState
 	}
 
 	private _connect() {
@@ -102,7 +126,7 @@ class WebSocketConnect extends WebSocketConnectEvent {
 			const _shouldReconnect =
 				reconnect.enabled && !this._manualClose
 					? typeof reconnect.shouldReconnect === 'function'
-						? reconnect.shouldReconnect(event)
+						? reconnect.shouldReconnect(event, this)
 						: true
 					: false
 			if (_shouldReconnect) {
@@ -139,7 +163,7 @@ class WebSocketConnect extends WebSocketConnectEvent {
 
 			// 处理排队消息
 			if (messageQueue.enabled) {
-				this._q.process((data) => this.send(data))
+				this._q.process((d) => this.send(d))
 			}
 
 			// 启动心跳监测 (无消息队列时)
@@ -152,11 +176,16 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		this.ws = ws
 	}
 
+	/**
+	 * 发送消息
+	 * @param data 待发送数据
+	 * @returns
+	 */
 	send(data: any) {
 		if (data === undefined) return
 
 		const ws = this.ws
-		if (invalidMessageType.indexOf(getType(data)) !== -1) {
+		if (!validWsData(data)) {
 			data = JSON.stringify(data)
 		}
 		if (ws && ws.readyState === WebSocket.OPEN) {
@@ -169,7 +198,12 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		}
 	}
 
-	close() {
+	/**
+	 * 关闭 websocket 连接
+	 * @param code close状态码
+	 * @param reason close原因
+	 */
+	close(code?: number | string, reason?: string) {
 		//主动关闭
 		this._manualClose = true
 		this._opt = null!
@@ -191,18 +225,14 @@ class WebSocketConnect extends WebSocketConnectEvent {
 			this._q = null!
 		}
 		if (this.ws) {
-			this.ws.close()
+			if (typeof code === 'string') {
+				reason = reason || code
+				code = 1000
+			}
+			this.ws.close(code, reason)
 			this.ws = null
 		}
 	}
-
-	/**
-	 * 心跳监测 keepAlive
-	 * 用于启动/变更心跳监测配置
-	 * @param message 是否开启心跳监测或心跳监测消息体💓
-	 * @returns
-	 */
-	ping() {}
 }
 
 export default WebSocketConnect
