@@ -1,0 +1,58 @@
+{
+	"name": "@jotter/websocket",
+	"version": "1.2.4",
+	"description": "Modern and useful WebSocket API wrapper class with additional features such as auto-reconnect, message queuing and Keep-alive detection.",
+	"type": "module",
+	"main": "dist/index.js",
+	"unpkg": "dist/index.min.js",
+	"jsdelivr": "dist/index.min.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"module": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./*": "./dist/*"
+	},
+	"files": [
+		"dist"
+	],
+	"scripts": {
+		"server": "node ./src/server.js"
+	},
+	"buildOptions": {
+		"input": "source/index.ts",
+		"name": "WebSocketConnect",
+		"target": [
+			"es2015",
+			"es5"
+		]
+	},
+	"keywords": [
+		"websocket",
+		"WebSocketConnect",
+		"reconnecting",
+		"websocket connect",
+		"websocket client",
+		"reconnect websocket",
+		"websocket keep alive"
+	],
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	},
+	"sideEffects": false,
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/websocket",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Marinerer/jotter.git",
+		"directory": "libs/websocket"
+	},
+	"author": "Mariner <mengqing723@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Marinerer/jotter/issues"
+	}
+}

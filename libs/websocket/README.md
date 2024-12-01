@@ -1,291 +1,231 @@
-# WebSocket
+# WebSocketConnect
 
-[ [English](./README.md) | [中文](https://github.com/Meqn/jotter/blob/main/libs/websocket/README.zh_CN.md) ]
+[![version][npm-image]][npm-url]
+[![CI status][github-action-image]][github-action-url]
+[![codecov][codecov-image]][codecov-url]
+[![downloads][downloads-image]][npm-url]
+[![size][bundlephobia-image]][bundlephobia-url]
+[![browsers](https://img.shields.io/badge/Browser-IE10-brightgreen?style=flat-square)][github-url]
 
+[github-url]: https://github.com/Marinerer/jotter/blob/main/libs/websocket
+[npm-url]: https://www.npmjs.com/package/@jotter/websocket
+[npm-image]: https://img.shields.io/npm/v/@jotter/websocket?style=flat-square
+[github-action-image]: https://img.shields.io/github/actions/workflow/status/Marinerer/jotter/release.yml?style=flat-square
+[github-action-url]: https://github.com/Marinerer/jotter/actions/workflows/release.yml
+[codecov-image]: https://codecov.io/gh/Marinerer/jotter/graph/badge.svg?token=G7QXEHCEXW
+[codecov-url]: https://codecov.io/gh/Marinerer/jotter
+[downloads-image]: https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square
+[bundlephobia-image]: https://img.shields.io/bundlephobia/minzip/@jotter/websocket?style=flat-square
+[bundlephobia-url]: https://bundlephobia.com/package/@jotter/websocket
 
-[![version](https://img.shields.io/npm/v/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
-[![downloads](https://img.shields.io/npm/dm/@jotter/websocket?style=flat-square)](https://www.npmjs.com/package/@jotter/websocket)
-[![size](https://img.shields.io/bundlephobia/minzip/@jotter/websocket?style=flat-square)](https://bundlephobia.com/package/@jotter/websocket)
-[![languages](https://img.shields.io/github/languages/top/meqn/jotter?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/websocket)
-[![license](https://img.shields.io/npm/l/@jotter/websocket?style=flat-square)](https://github.com/Meqn/jotter/blob/main/libs/websocket)
+Modern and useful WebSocket API wrapper class with additional features such as auto-reconnect, message queuing and Keep-alive detection.
 
+标准且实用的 WebSocket 包装器，具有标准 `WebSocket API`。支持心跳检测，异常消息处理和自动重连机制。
 
+## Features
 
-> Modern and useful WebSocket wrapper, with standard WebSocket API. Supports keep alive, exception message handling and reconnection.  
+- ⏰ With Standard WebSocket API
+- 🧬 Automatic Reconnection
+- 💓 Keep-alive (Ping) Support
+- 📮 Message Queuing
+- 🌐 Flexible Configuration
 
-
-
-## Feature
-* 🕰 Has the same API and call method as `WebSocket`;
-* ⚙️ Fully configurable;
-* 🧬 Automatic reconnection in case of abnormal disconnection, with customizable reconnection rules;
-* 📮 Message buffer (accumulated messages are sent when the connection is successful);
-* 💗 Built-in heartbeat detection method, always in a keep-alive state.
-
-
-
-## Install
+## Installation
 
 **npm**
+
 ```
 npm install @jotter/websocket
 ```
+
 **browser**
-```
-https://cdn.jsdelivr.net/npm/@jotter/websocket/dist/index.global.js
-```
 
-
+```
+https://cdn.jsdelivr.net/npm/@jotter/websocket/dist/index.min.js
+```
 
 ## Usage
-Fully compatible with the `WebSocket` browser API, for specific usage, please refer to: [MDN WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
 
-```js
+Fully compatible with the `WebSocket` API, for specific usage, please refer to: [MDN WebSocket API](https://developer.mozilla.org/en-US/docs/Web/API/WebSocket)
+
+**Basic:**
+
+```typescript
 import WebSocketConnect from '@jotter/websocket'
 
-const socket = new WebSocketConnect('ws://127.0.0.1/ws', {
-  // Connect immediately after instantiation
-  autoOpen: true,
-  // Automatically reconnect after abnormal disconnection
-  shouldReconnect(event) {
-    return ![1000, 1001, 1005].includes(event.code)
-  },
-  // Maximum number of automatic reconnections, no longer reconnected after exceeding
-  maxReconnectAttempts: 20,
-  // Heartbeat detection is turned off by default
-  ping: false
+// Basic WebSocket connection
+const ws = new WebSocketConnect('wss://example.com/')
+
+// Event listeners
+ws.addEventListener('open', (event) => {
+	console.log('Connection established')
+	ws.send('Hello, server!')
 })
 
-// socket.onclose
-socket.onerror = function(err) {
-  console.error(err.message)
+ws.onmessage = (event) => {
+	console.log('Received message:', event.data)
 }
-socket.onopen = function(event) {
-  // Manually start heartbeat detection
-  socket.send({ data: 'ping', token: 'xxxxxx' })
-}
-socket.onmessage = function(event) {
-  // ...
-}
-// or
-socket.addEventListener('message', function(event) {
-  //
-})
 
-socket.close()
+// Send text
+ws.send('Hello, world!')
+
+// Send JSON
+ws.send({ type: 'message', content: 'Hello' })
+
+// Send binary data
+ws.send(new ArrayBuffer(8))
+```
+
+**Advanced:**
+
+```typescript
+const ws = new WebSocketConnect('wss://example.com/', {
+	// Reconnection options
+	reconnect: {
+		enabled: true,
+		maxAttempts: 5,
+		delay: (attempt) => Math.min(2000 * Math.pow(1.2, attempt), 30000),
+	},
+
+	// Ping (Keep-alive) options
+	ping: {
+		enabled: true,
+		interval: 3000,
+		message: 'ping',
+	},
+
+	// Message queue options
+	messageQueue: 100,
+
+	// Optional WebSocket protocols
+	protocols: ['chat', 'json'],
+})
 ```
 
 ## API
+
+### Constructor
+
 ```typescript
-const socket = new WebSocketConnect(
+new WebSocketConnect(
   url: string,
   protocols?: string | string[],
-  options?: Options
+  options?: IOptions
 )
 ```
 
 ### url
+
 WebSocket connection Url.
+
 - Type: `string`
 
 ### protocols
+
 WebSocket connection protocol.
+
 - Type: `string | string[]`
 
-## Options
+### Options
+
 WebSocket connection options.
 
-### autoOpen
-Whether to attempt to connect immediately upon instantiation.  
-You can manually open or close by calling `ws.open()` and `ws.close()`.
-- Type: `boolean`
-- Default: `true`
+```typescript
+interface WebSocketConnectOptions {
+	// Reconnection configuration
+	reconnect?:
+		| boolean
+		| {
+				enabled?: boolean
+				maxAttempts?: number
+				delay?: number | ((attempt: number) => number)
+				shouldReconnect?: (event: CloseEvent, context: any) => boolean
+		  }
 
+	// Keep-alive (Ping) configuration
+	ping?:
+		| boolean
+		| {
+				enabled?: boolean
+				interval?: number
+				message?: any
+		  }
 
-### shouldReconnect
-Whether to automatically reconnect. By default, it will not reconnect for codes `[1000, 1001, 1005]`.  
-You can set the reconnection rules in `shouldReconnect(event, ctx)`.
-- Type: `boolean | ((event: Event, context: any) => boolean)`
-- Default: `true`
+	// Message queue configuration (Storing Unsent Messages)
+	messageQueue?:
+		| boolean
+		| number
+		| {
+				enabled?: boolean
+				max?: number
+		  }
 
-### maxReconnectAttempts
-Maximum number of reconnections
-- Type: `number`
-- Default: `Infinity`
-
-### reconnectInterval
-The number of milliseconds to delay before attempting to reconnect. Unit: `ms`.
-- Type: `number`
-- Default: `1000`
-
-### reconnectDecay
-The rate at which the automatic reconnection delay increases, ranging from `[0, 1]`.
-- Type: `number`
-- Default: `1`
-
-### maxReconnectInterval
-The maximum number of milliseconds to delay before attempting to reconnect. Unit: `ms`.
-- Type: `number`
-- Default: `30000`
-
-### autoSend
-Whether to automatically send queued messages after a successful connection.
-- Type: `boolean`
-- Default: `false`
-
-### maxMessageQueue
-Maximum number of queued messages (No duplicate messages are saved).
-- Type: `number`
-- Default: `Infinity`
-
-### ping
-Whether to enable heartbeat monitoring, if `string` then to send the message.  
-You can manually open or close by calling `ws.ping()`.
-- Type: `string | boolean`
-- Default: `false`
-
-### pingInterval
-Frequency of sending heartbeat detection. Unit: `ms`.
-- Type: `number`
-- Default: `5000`
-
-### binaryType
-The type of binary data transmitted by the WebSocket connection.
-- Type: `'blob' | 'arraybuffer'`
-- Default: `'blob'`
-
-
-
-## Events
-
-### open
-WebSocket connection successful event.
-- `onopen(event: Event): void`
-
-### message
-WebSocket message received event.
-- `onmessage(event: MessageEvent): void`
-
-### error
-WebSocket connection error event.
-- `onerror(event: ErrorEvent): void`
-
-### close
-WebSocket connection closed event.
-- `onclose(event: CloseEvent): void`
-
-### reconnect
-WebSocket reconnection event.
-- `onreconnect(event: Event): void`
-> `event.detail.count` 可获取当前重连次数
-
-### reconnectend
-WebSocket reconnection end event.
-- `onreconnectend(event: Event): void`
-
-
-
-## Instance Methods
-
-### open(reconnectAttempt?: boolean): void
-Open the WebSocket connection.
-- `reconnectAttempt` - Whether it is a reconnection.
-
-### send(data: any): void;
-Send a message.
-- `data` - Message content.
-
-### close(code?: number | string, reason?: string): void;
-Close the WebSocket connection.
-- `code` - Close status code.
-- `reason` - Close reason.
-
-### ping(message?: boolean | string | object): void;
-Heartbeat detection. 💓  
-Automatically enabled in the Options configuration or manually enabled or disabled by calling the `ping()` method.
-- `message` - Whether to enable heartbeat detection or heartbeat detection message body.
-
-```js
-// Disable
-socket.ping(false)
-// Enable
-socket.ping({ data: 'ping', token: 'xxxxxx' })
-```
-
-
-
-## Examples
-
-> Use it with the event listener EventEmitter for a smoother experience.
-
-Adjustment according to the actual situation:
-```js
-import WebSocketConnect from '@jotter/websocket'
-import EventEmitter from '@jotter/emitter'
-
-const socket = new WebSocketConnect('ws://127.0.0.1', null, {})
-const emitter = new EventEmitter()
-
-socket.onmessage = function(event) {
-  const data = JSON.parse(event.data)
-  // Normal processing...
-  emitter.emit(data.type, data.result)
-}
-
-/**
- * Socket request and listener
- * @param {string | any} type Listening message type or sending data
- * @param {any} data Sending data
- * @param {function} listener Message processing function
- * @param {object} options Configuration item, supports listening event processing once `{ once: true }`
- * @returns 
- */
-// function request(data)
-function request(type, data, listener, options = {}) {
-  if (typeof listener === 'function') {
-    addListener(type, listener, options)
-  }
-  // arguments.length=1, then request only supports send
-  socket.send(arguments.length === 1 ? type : data)
-  return { type, listener }
-}
-
-function addListener(type, listener, options = {}) {
-  emitter[options.once ? 'once' : 'on'](type, listener)
-  return { type, listener }
-}
-function removeListener(type, listener) {
-  emitter.off(type, listener)
-}
-
-export {
-  socket,
-  emitter,
-  request,
-  addListener,
-  removeListener
+	// WebSocket protocols
+	protocols?: string | string[]
 }
 ```
 
-Specific usage:
+#### reconnect
 
-```js
-// Send device real-time location message and listen for return data
-const deviceCoord = request('device_coord', { deviceId: 9527 }, function(result) {
-  // data = { type: 'device_coord', result: { id: 9527, lng: '32.48547', lat: '12.34849' } }
-  const coord = [result.lng, result.lat]
-})
+Reconnection configuration.
 
-// Only send messages
-request({ device: 9527 })
+| prop            | type                        | default | description                             |
+| --------------- | --------------------------- | ------- | --------------------------------------- |
+| enabled         | boolean                     | true    | Whether to automatically reconnect      |
+| maxAttempts     | number \| (attempt)=>number | 10      | Maximum number of reconnection attempts |
+| delay           | number                      | 1000    | Reconnection delay (ms)                 |
+| shouldReconnect | (event, ctx) => boolean     |         | User-defined reconnection rules         |
 
-// Remove device location listener
-removeListener('device_coord', deviceCoord.listener)
-```
+#### ping
 
+Keep-alive (Ping) configuration.
 
+| prop     | type    | default | description                       |
+| -------- | ------- | ------- | --------------------------------- |
+| enabled  | boolean | true    | Whether to send keep-alive (Ping) |
+| interval | number  | 30000   | Keep-alive (Ping) interval (ms)   |
+| message  | any     | 'ping'  | Keep-alive (Ping) message         |
 
-## refs
-- [pladaria/reconnecting-websocket](https://github.com/pladaria/reconnecting-websocket/)
-- [joewalnes/reconnecting-websocket](https://github.com/joewalnes/reconnecting-websocket)
-- [lukeed/sockette](https://github.com/lukeed/sockette/)
+#### messageQueue
+
+Message queue configuration. (Accumulated unsent-messages are sent when the connection is successful)
+
+| prop    | type    | default | description                             |
+| ------- | ------- | ------- | --------------------------------------- |
+| enabled | boolean | true    | Whether to enable message queue         |
+| max     | number  | 100     | Maximum number of messages in the queue |
+
+### Methods
+
+- `send(data: any)`: Send a message
+- `close(code?: number, reason?: string)`: Close the connection
+
+### Events
+
+- `open`: Connection established
+- `close`: Connection closed
+- `message`: Message received
+- `error`: Connection error
+- `reconnect`: Reconnection attempt
+- `reconnectend`: Reconnection attempts ended
+
+### Properties
+
+- `url`: WebSocket URL
+- `readyState`: Current connection state
+- `protocol`: Negotiated protocol
+- `bufferedAmount`: Number of bytes queued
+- `binaryType`: Binary data type
+- `extensions`: Negotiated extensions
+
+## Browser Compatibility
+
+Supports all modern browsers with WebSocket API support.
+
+## License
+
+MIT License
+
+## Contributing
+
+Contributions are welcome! Please feel free to submit a [Pull Request](https://github.com/Marinerer/jotter/pulls).
