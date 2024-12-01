@@ -1,111 +1,148 @@
-export interface IArguments {
-  /**
-   * The URL to which to connect
-   * 连接websocket服务端的 URL
-   */
-  url: string
-  /**
-   * Either a single protocol string or an array of protocol strings. 
-   * websocket连接协议
-   */
-  protocols: string | string[]
-  /**
-   * 在连接被认为超时之前等待的毫秒数, 单位:ms
-   * @default 4000
-   */
-  // readonly timeout: number,
-  /**
-   * 是否在实例化后立即尝试连接.  
-   * 可调用`ws.open()`和`ws.close()`手动打开或关闭
-   * @default true
-   */
-  readonly autoOpen: boolean
-
-  /**
-   * 是否开启自动重连机制, 默认 code=[1000, 1001, 1005] 不会重连
-   * 在`shouldReconnect(event, ctx)`中设定重新连接规则
-   * @default true
-   */
-  readonly shouldReconnect: boolean | ((event: Event, context: any) => boolean)
-  /**
-   * 尝试重新连接最大次数
-   * @default Infinity
-   */
-  readonly maxReconnectAttempts: number
-  /**
-   * 尝试重新连接前延迟的毫秒数, 单位:ms
-   * @default 1000
-   */
-  readonly reconnectInterval: number
-  /**
-   * 自动重连延迟重连速率,在[0-1]之间
-   * @default 1
-   */
-  reconnectDecay: number
-  /**
-   * 延迟重新连接尝试的最大毫秒数, 单位:ms
-   * @default 30000
-   */
-  readonly maxReconnectInterval: number
-
-  /**
-   * 开启连接成功后, 自动处理待发消息队列
-   * @default false
-   */
-  readonly autoSend: boolean
-  /**
-   * 保存待发送消息队列最大个数 (不会保存重复消息)
-   * @default Infinity
-   */
-  readonly maxMessageQueue: number
-
-  /**
-   * 启用心跳监测, 若为`string`则为发送消息内容
-   * @default false
-   */
-  ping: boolean | string | object
-  /**
-   * 发送心跳检测频率, 单位:ms
-   * @default 5000
-   */
-  readonly pingInterval: number
-
-  /**
-   * websocket 连接所传输二进制数据的类型
-   * @default 'blob'
-   */
-  binaryType: 'blob' | 'arraybuffer'
+export interface ReconnectOptions {
+	/**
+	 * Enable automatic reconnection
+	 *
+	 * 启用自动重连
+	 * @default true
+	 */
+	enabled: boolean
+	/**
+	 * Maximum number of reconnection attempts
+	 *
+	 * 最大重连次数
+	 * @default 10
+	 */
+	maxAttempts?: number
+	/**
+	 * Reconnection delay time. (Unit: ms)
+	 *
+	 * 重连延迟时间. 单位: ms
+	 * 指数退避算法: `次数 => Math.min(初始值 * Math.pow(rate, 次数), 最大值)`
+	 * @default `(attempt) => Math.min(2000 * Math.pow(1.2, attempt), 30000)`
+	 */
+	delay?: number | ((attempt: number) => number)
+	/**
+	 * User-defined reconnection rules
+	 *
+	 * 自定义重连规则
+	 * 示例: `event => ![1000, 1001, 1005].includes(event.code)`
+	 */
+	shouldReconnect?: (event: CloseEvent, ctx: any) => boolean
 }
 
-// 生成的配置项 (参数配置 + 动态生成)
-export interface IOptions extends IArguments {
-  /**
-   * 发送心跳检测消息内容.
-   */
-  pingMessage: string | object
+export interface PingOptions {
+	/**
+	 * Enable keep-alive
+	 *
+	 * 启用心跳
+	 * @default true
+	 */
+	enabled: boolean
+	/**
+	 * Keep-alive interval time. (Unit: ms)
+	 *
+	 * 心跳间隔时间
+	 * @default 3000
+	 */
+	interval?: number
+	/**
+	 * Keep-alive message
+	 *
+	 * 心跳消息
+	 * @default 'ping'
+	 */
+	message?: any
 }
 
-export type WsEventListener = (event: Event) => void
+export interface MessageQueueOptions {
+	/**
+	 * Enable message-queue
+	 *
+	 * 启用消息队列
+	 */
+	enabled: boolean
+	/**
+	 * Maximum message-queue length
+	 *
+	 * 最大队列长度
+	 * @default Infinity
+	 */
+	max?: number
+}
 
+export interface IOptions {
+	/**
+	 * Either a single protocol string or an array of protocol strings.
+	 *
+	 * websocket 子协议
+	 */
+	protocols?: string | string[]
+	/**
+	 * Whether to enable automatic reconnection
+	 *
+	 * 是否自动重连
+	 * @default true
+	 */
+	reconnect?: boolean | ReconnectOptions
+	/**
+	 * Whether to enable keep-alive
+	 *
+	 * 是否启用心跳
+	 * @default true
+	 */
+	ping?: boolean | PingOptions
+	/**
+	 * Whether to enable message-queue
+	 *
+	 * 是否启用消息队列
+	 * @default true
+	 */
+	messageQueue?: boolean | number | MessageQueueOptions
+}
+
+export type WebSocketOptions = {
+	/**
+	 * The URL of the target WebSocket server to connect to.
+	 *
+	 * websocket 连接地址
+	 */
+	url: string
+	protocols: string | string[]
+	reconnect: ReconnectOptions
+	ping: PingOptions
+	messageQueue: MessageQueueOptions
+}
+
+// 事件选项接口
+interface EventOptions extends AddEventListenerOptions {
+	bubbles?: boolean
+	cancelable?: boolean
+	composed?: boolean
+}
+
+// 自定义事件选项接口
+export interface CustomEventOptions<T = any> extends EventOptions {
+	detail?: T
+}
+
+// websocket 事件接口
+export interface WebSocketConnectEventMap extends WebSocketEventMap {
+	reconnect: Event
+	reconnectend: Event
+}
+
+export interface WsMessageEvent<T = any> extends CustomEvent<T> {
+	data?: T
+	lastEventId?: string
+	origin?: string
+	ports?: MessagePort[]
+	source?: MessageEventSource | null
+}
 export interface WsCloseEvent extends CustomEvent {
-  code: number
-  reason: string
-  wasClean: boolean
+	code: number
+	reason: string
+	wasClean: boolean
 }
 
-export interface WsErrorEvent extends CustomEvent {
-  colno?: number
-  error?: any
-  filename?: string
-  lineno?: number
-  message?: string
-}
-
-export interface WsMessageEvent extends CustomEvent {
-  data: any
-  lastEventId: string
-  origin: string
-  ports: ReadonlyArray<MessagePort>
-  source: MessageEventSource | null;
-}
-
+// websocket 消息类型
+export type WsMessageType = string | ArrayBufferLike | Blob | ArrayBufferView
