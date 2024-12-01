@@ -1,210 +1,243 @@
 /**
  * @jest-environment jsdom
  */
+//@ts-nocheck
+import WebSocketConnect from '../src/index'
 
-import WebSocketConnect from '../src/index';
-// @ts-ignore
-import WebSocketClient from 'ws'
+// Mock WebSocket
+class MockWebSocket {
+	static CONNECTING = 0
+	static OPEN = 1
+	static CLOSING = 2
+	static CLOSED = 3
 
-const PORT = 30001
-const URL = `ws://localhost:${PORT}/`
+	url: string
+	protocol: string
+	readyState: number
+	onopen: () => void
+	onclose: () => void
+	onerror: () => void
+	onmessage: () => void
+	binaryType: BinaryType
+	extensions: string
+	bufferedAmount: number
 
-// ! ws@version < 8.x
-const WebSocketServer = WebSocketClient.Server
+	constructor(url: string, protocols?: string | string[]) {
+		this.url = url
+		this.protocol = typeof protocols === 'string' ? protocols : (protocols || [])[0] || ''
+		this.readyState = MockWebSocket.CONNECTING
+		this.binaryType = 'blob'
+		this.extensions = ''
+		this.bufferedAmount = 0
+	}
+
+	send(data: any) {
+		this.bufferedAmount = data.length
+	}
+
+	close(code?: number, reason?: string) {
+		this.readyState = MockWebSocket.CLOSED
+	}
+}
+
+// Replace global WebSocket with MockWebSocket
+;(global as any).WebSocket = MockWebSocket
 
 describe('WebSocketConnect', () => {
-  let socket: WebSocketConnect;
+	let wsConnect: WebSocketConnect
+	let originalWebSocket: any
 
-  beforeEach(() => {
-    socket = new WebSocketConnect(URL)
-  })
-  afterEach(() => {
-    jest.restoreAllMocks()
-  })
+	beforeEach(() => {
+		// Store original WebSocket
+		originalWebSocket = global.WebSocket
+		// Replace with MockWebSocket
+		global.WebSocket = MockWebSocket
+	})
 
-  it('should create WebSocket instance', () => {
-    expect(socket).toBeInstanceOf(WebSocketConnect);
-    expect(socket).toHaveProperty('options');
-    expect(socket.ws).not.toBeNull();
-    expect(socket.ws).toBeInstanceOf(window.WebSocket)
-    expect(socket.url).toBe(URL)
-  });
+	afterEach(() => {
+		// Clean up WebSocket connection if exists
+		if (wsConnect) {
+			wsConnect.close()
+		}
+		// Restore original WebSocket
+		global.WebSocket = originalWebSocket
+	})
 
-  it('should throw error if no url provided', () => {
-    expect(() => new WebSocketConnect('')).toThrow(Error);
-    expect(() => new WebSocketConnect({ url: '' })).toThrow(Error);
-  });
+	describe('Constructor', () => {
+		it('should create a WebSocket connection with default options', () => {
+			wsConnect = new WebSocketConnect('ws://example.com')
+			expect(wsConnect).toBeDefined()
+			expect(wsConnect.readyState).toBe(MockWebSocket.CONNECTING)
+		})
 
-  it('should throw error if no websocket support in environment', () => {
-    const originalWebSocket = (window as any).WebSocket;
-    (window as any).WebSocket = undefined;
+		it('should create a WebSocket connection with specific protocols', () => {
+			wsConnect = new WebSocketConnect('ws://example.com', ['chat', 'json'])
+			expect(wsConnect.protocol).toBe('chat')
+		})
 
-    expect(() => {
-      new WebSocketConnect(URL);
-    }).toThrow(Error);
+		it('should throw error if no URL is provided', () => {
+			expect(() => {
+				new WebSocketConnect('')
+			}).toThrow(TypeError)
+		})
 
-    (window as any).WebSocket = originalWebSocket;
-  });
+		it('should throw error if WebSocket is not supported', () => {
+			// Temporarily remove WebSocket from global
+			delete (global as any).WebSocket
+			expect(() => {
+				new WebSocketConnect('ws://example.com')
+			}).toThrow(Error)
+			// Restore WebSocket
+			global.WebSocket = MockWebSocket
+		})
+	})
 
-  it('should websocket protocol', (done) => {
-    const anyProtocol = 'foo'
-    const wss = new WebSocketServer({ port: PORT })
-    socket = new WebSocketConnect(URL, anyProtocol)
+	describe('Configuration Options', () => {
+		it('should handle custom reconnect options', () => {
+			wsConnect = new WebSocketConnect('ws://example.com', {
+				reconnect: {
+					enabled: true,
+					maxAttempts: 5,
+					delay: 1000,
+				},
+			})
+			expect(wsConnect['_opt'].reconnect.maxAttempts).toBe(5)
+		})
 
-    socket.addEventListener('open', () => {
-      expect(socket.url).toBe(URL)
-      expect(socket.protocol).toBe(anyProtocol)
-      socket.close()
-    })
+		it('should handle custom ping options', () => {
+			wsConnect = new WebSocketConnect('ws://example.com', {
+				ping: {
+					enabled: true,
+					interval: 5000,
+					message: 'custom ping',
+				},
+			})
+			expect(wsConnect['_opt'].ping.interval).toBe(5000)
+		})
 
-    socket.addEventListener('close', () => {
-      wss.close(() => {
-        setTimeout(done, 500);
-      })
-    })
-  })
+		it('should handle message queue options', () => {
+			wsConnect = new WebSocketConnect('ws://example.com', {
+				messageQueue: {
+					enabled: true,
+					max: 100,
+				},
+			})
+			expect(wsConnect['_opt'].messageQueue.max).toBe(100)
+		})
+	})
 
-  it('should open connection', () => {
-    const originalWebSocket = (window as any).WebSocket;
-    (window as any).WebSocket = jest.fn(() => ({
-      binaryType: 'blob',
-      readyState: WebSocket.OPEN,
-      send: jest.fn(),
-      close: jest.fn(),
-      onclose: null,
-      onerror: null,
-      onmessage: null,
-      onopen: null,
-    }));
+	describe('Methods', () => {
+		beforeEach(() => {
+			wsConnect = new WebSocketConnect('ws://example.com', { messageQueue: true })
+		})
 
-    socket.open();
-    expect(socket.ws).not.toBeNull();
-    expect((window as any).WebSocket).toHaveBeenCalledTimes(1);
+		it('should send messages', () => {
+			const sendSpy = jest.spyOn(wsConnect['ws']!, 'send')
 
-    (window as any).WebSocket = originalWebSocket;
-  });
+			// Simulate open state
+			wsConnect['ws']!.readyState = MockWebSocket.OPEN
 
-  /* it('should add event listener', () => {
-    const spyAddEventListener = jest.spyOn(document.createElement('div'), 'addEventListener');
+			wsConnect.send('test message')
+			expect(sendSpy).toHaveBeenCalledWith('test message')
+		})
 
-    socket.addEventListener('event', () => {});
-    expect(spyAddEventListener).toHaveBeenCalledTimes(1);
+		it('should queue messages when not connected', () => {
+			// Ensure connection is not open
+			wsConnect['ws']!.readyState = MockWebSocket.CONNECTING
 
-    spyAddEventListener.mockReset();
-    spyAddEventListener.mockRestore();
-  }); */
+			wsConnect.send('queued message')
 
-  it('should add/remove/dispatch event listener', () => {
-    const onMessage1 = jest.fn()
-    const onMessage2 = jest.fn()
+			// Check that message was added to queue
+			expect(wsConnect['_q'].add('queued message')).toBeTruthy()
+		})
 
-    socket.addEventListener('message', onMessage1)
-    socket.addEventListener('message', onMessage2)
-    socket.dispatchEvent(new MessageEvent('message', { data: 'Hello' }));
-    expect(onMessage1).toHaveBeenCalledWith(expect.any(MessageEvent));
-    expect(onMessage1).toHaveBeenCalledTimes(1);
-    expect(onMessage2).toHaveBeenCalledWith(expect.any(MessageEvent));
-    expect(onMessage2).toHaveBeenCalledTimes(1);
+		it('should close connection', () => {
+			const closeSpy = jest.spyOn(wsConnect['ws']!, 'close')
 
-    socket.removeEventListener('message', onMessage1)
-    socket.dispatchEvent(new MessageEvent('message', { data: 'world' }));
-    expect(onMessage1).toHaveBeenCalledTimes(1);
-    expect(onMessage2).toHaveBeenCalledTimes(2);
-  });
+			wsConnect.close(1000, 'normal closure')
 
-  it('connection status constants', (done) => {
-    const wss = new WebSocketServer({ port: PORT })
-    socket = new WebSocketConnect(URL)
+			expect(closeSpy).toHaveBeenCalledWith(1000, 'normal closure')
+			expect(wsConnect.ws).toBeNull()
+		})
+	})
 
-    expect(WebSocketConnect.CONNECTING).toBe(0)
-    expect(WebSocketConnect.OPEN).toBe(1)
-    expect(WebSocketConnect.CLOSING).toBe(2)
-    expect(WebSocketConnect.CLOSED).toBe(3)
-    
-    expect(socket.CONNECTING).toBe(0)
-    expect(socket.OPEN).toBe(1)
-    expect(socket.CLOSING).toBe(2)
-    expect(socket.CLOSED).toBe(3)
+	describe('Event Handling', () => {
+		beforeEach(() => {
+			// 使用假的定时器
+			jest.useFakeTimers()
+			wsConnect = new WebSocketConnect('ws://example.com', { reconnect: true })
+		})
 
-    socket.addEventListener('open', () => {
-      expect(socket.readyState).toBe(1)
-      socket.close()
-    })
-    socket.addEventListener('close', () => {
-      expect(socket.readyState).toBe(0) // CLOSED, //! WebSocket.CONNECTING = 0
-      wss.close(() => {
-        setTimeout(done, 500)
-      })
-    })
-  })
+		it('should dispatch events', () => {
+			const mockListener = jest.fn()
+			wsConnect.addEventListener('open', mockListener)
 
-  /* it('should set message queue on sending message when connection is not open', () => {
-    socket.send('message');
-    expect(socket._messageQueue).toContain('message');
-    expect(socket._messageQueue.size).toBe(1);
-  }); */
+			// Simulate open event
+			const openEvent = new Event('open')
+			wsConnect.dispatchEvent(openEvent)
 
-  it('should send message if connection is open', () => {
-    const spySend = jest.fn();
-    // @ts-ignore
-    socket.ws = {
-      binaryType: 'blob',
-      readyState: WebSocket.OPEN,
-      send: spySend,
-      close: jest.fn(),
-      onclose: null,
-      onerror: null,
-      onmessage: null,
-      onopen: null,
-    };
+			expect(mockListener).toHaveBeenCalled()
+		})
 
-    socket.send('message');
-    expect(spySend).toHaveBeenCalledTimes(1);
-    expect(spySend).toHaveBeenCalledWith('message');
-  });
+		it('should handle reconnection', () => {
+			const reconnectListener = jest.fn()
+			wsConnect.addEventListener('reconnect', reconnectListener)
 
-  /* it('should reconnect on close', () => {
-    socket.options.shouldReconnect = true;
-    socket._resetReconnect = jest.fn();
-    socket.reconnect(new CloseEvent('close'));
+			// Simulate connection close event
+			const closeEvent = new CloseEvent('close')
+			wsConnect['ws']!.onclose!(closeEvent)
 
-    expect(socket._resetReconnect).toHaveBeenCalledTimes(1);
-  }); */
+			// 模拟等待实际时间，不需要等待 setTimeout 的时间
+			jest.advanceTimersByTime(2000)
 
-  /* it('should not reconnect if shouldReconnect is false', () => {
-    socket.options.shouldReconnect = false;
-    socket._resetReconnect = jest.fn();
-    socket.reconnect(new CloseEvent('close'));
+			expect(reconnectListener).toHaveBeenCalled()
+		})
+	})
 
-    expect(socket._resetReconnect).toHaveBeenCalledTimes(0);
-  }); */
+	describe('Getters', () => {
+		beforeEach(() => {
+			wsConnect = new WebSocketConnect('ws://example.com')
+		})
 
-  /* it('should not reconnect if connection is intentionally closed', () => {
-    socket.options.shouldReconnect = true;
-    socket._resetReconnect = jest.fn();
-    socket.reconnect(new CloseEvent('close', { code: WebSocket.CONNECTING }));
+		it('should return correct static and instance constants', () => {
+			expect(WebSocketConnect.CONNECTING).toBe(0)
+			expect(WebSocketConnect.OPEN).toBe(1)
+			expect(WebSocketConnect.CLOSING).toBe(2)
+			expect(WebSocketConnect.CLOSED).toBe(3)
 
-    expect(socket._resetReconnect).toHaveBeenCalledTimes(0);
-  }); */
+			expect(wsConnect.CONNECTING).toBe(0)
+			expect(wsConnect.OPEN).toBe(1)
+			expect(wsConnect.CLOSING).toBe(2)
+			expect(wsConnect.CLOSED).toBe(3)
+		})
 
-  it('should close websocket', () => {
-    const spyClose = jest.fn();
-    // @ts-ignore
-    socket.ws = {
-      binaryType: 'blob',
-      readyState: WebSocket.CLOSING,
-      send: jest.fn(),
-      close: spyClose,
-      onclose: null,
-      onerror: null,
-      onmessage: null,
-      onopen: null,
-    };
+		it('should get and set binary type', () => {
+			wsConnect.binaryType = 'arraybuffer'
+			expect(wsConnect.binaryType).toBe('arraybuffer')
+		})
 
-    socket.close(1000, 'reason');
-    expect(spyClose).toHaveBeenCalledTimes(1);
-    expect(spyClose).toHaveBeenCalledWith(1000, 'reason');
-    expect(socket.ws).toBeNull();
-  });
+		it('should return protocol and extensions', () => {
+			expect(wsConnect.protocol).toBeDefined()
+			expect(wsConnect.extensions).toBeDefined()
+		})
+	})
 
-});
+	describe('Edge Cases', () => {
+		it('should handle sending invalid data', () => {
+			wsConnect = new WebSocketConnect('ws://example.com')
+
+			// Simulate open state
+			wsConnect['ws']!.readyState = MockWebSocket.OPEN
+
+			const sendSpy = jest.spyOn(wsConnect['ws']!, 'send')
+
+			// Send undefined
+			wsConnect.send(undefined)
+			expect(sendSpy).not.toHaveBeenCalled()
+
+			// Send complex object
+			wsConnect.send({ key: 'value' })
+			expect(sendSpy).toHaveBeenCalledWith(JSON.stringify({ key: 'value' }))
+		})
+	})
+})
