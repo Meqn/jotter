@@ -22,6 +22,7 @@ function createOptions(url: string, options: IOptions): WebSocketOptions {
 		ping: {
 			enabled: true,
 			interval: 3000,
+			message: 'ping',
 		},
 		messageQueue: {
 			enabled: true,
@@ -97,6 +98,9 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		return WebSocketConnect.CLOSED
 	}
 
+	get url() {
+		return this.ws!.url
+	}
 	get bufferedAmount() {
 		// bufferedAmount === 0 表明所有消息已发送完毕
 		return this.ws!.bufferedAmount
@@ -111,10 +115,10 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		return this.ws!.extensions
 	}
 	get protocol() {
-		return this.ws?.protocol
+		return this.ws!.protocol
 	}
 	get readyState() {
-		return this.ws?.readyState
+		return this.ws!.readyState
 	}
 
 	private _connect() {
