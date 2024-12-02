@@ -21,11 +21,11 @@ export class ReconnectManager {
 
 		const { maxAttempts = Infinity, delay } = this.options
 		if (this.attempt < maxAttempts) {
+			this.attempt++
 			const delayTime = typeof delay === 'function' ? delay(this.attempt) : delay
 			this._timer = window.setTimeout(() => {
 				//重连处理
 				reconnect && reconnect(this.attempt)
-				this.attempt++
 			}, delayTime)
 		} else {
 			console.warn('websocket reconnect max attempts')
@@ -44,7 +44,7 @@ export class ReconnectManager {
 	}
 
 	reset() {
-		this.attempt = 0
 		this.stop()
+		this.attempt = 0
 	}
 }

@@ -13,22 +13,24 @@ export class QueueManager {
 
 	add(data: any) {
 		if (this.options.enabled && this.queue.length < (this.options.max || Infinity)) {
-			return this.queue.push(data)
+			if (this.queue.indexOf(data) < 0) {
+				// 防止重复添加消息
+				this.queue.push(data)
+			}
 		}
 		return false
 	}
 
 	process(send: (data: any) => any) {
-		if (this.options.enabled && this.queue.length > 0) {
-			this.queue.forEach((message) => {
-				send(message)
-			})
-			// 执行完后清空消息
-			this.clear()
+		if (!this.options.enabled) return
+		// 消息队列处理
+		while (this.queue.length > 0) {
+			send(this.queue.shift())
 		}
 	}
 
 	clear() {
+		// 清空消息
 		this.queue = []
 	}
 }

@@ -34,7 +34,7 @@ export interface PingOptions {
 	/**
 	 * Enable keep-alive
 	 *
-	 * 启用心跳
+	 * 启用心跳检测
 	 * @default true
 	 */
 	enabled: boolean
@@ -56,7 +56,7 @@ export interface PingOptions {
 
 export interface MessageQueueOptions {
 	/**
-	 * Enable message-queue
+	 * Enable message-queue (Storing Unsent Messages)
 	 *
 	 * 启用消息队列
 	 */

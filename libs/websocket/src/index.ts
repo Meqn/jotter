@@ -126,7 +126,7 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		const ws = new WebSocket(this._opt.url, this._opt.protocols)
 
 		ws.onclose = (event) => {
-			// 自动重连处理
+			// 自动重连处理 (非主动关闭自动重连)
 			const _shouldReconnect =
 				reconnect.enabled && !this._manualClose
 					? typeof reconnect.shouldReconnect === 'function'
@@ -160,7 +160,7 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		}
 
 		ws.onopen = (event) => {
-			// 连接成功，重置连接次数
+			// 重置自动重连次数
 			if (reconnect.enabled) {
 				this._r.reset()
 			}
@@ -240,3 +240,5 @@ class WebSocketConnect extends WebSocketConnectEvent {
 }
 
 export default WebSocketConnect
+
+export * from './types'
