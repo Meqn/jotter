@@ -1,6 +1,6 @@
 {
 	"name": "@jotter/websocket",
-	"version": "1.2.4",
+	"version": "2.0.0",
 	"description": "Modern and useful WebSocket API wrapper class with additional features such as auto-reconnect, message queuing and Keep-alive detection.",
 	"type": "module",
 	"main": "dist/index.js",
@@ -20,10 +20,10 @@
 		"dist"
 	],
 	"scripts": {
-		"server": "node ./src/server.js"
+		"server": "node ./example/server.js"
 	},
 	"buildOptions": {
-		"input": "source/index.ts",
+		"input": "src/index.ts",
 		"name": "WebSocketConnect",
 		"target": [
 			"es2015",
