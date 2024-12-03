@@ -1,0 +1,12 @@
+{
+	"name": "kitify",
+	"version": "0.0.0",
+	"description": "kitify",
+	"main": "index.js",
+	"buildOptions": {
+		"input": "index.js"
+	},
+	"keywords": [],
+	"author": "",
+	"license": "MIT"
+}
