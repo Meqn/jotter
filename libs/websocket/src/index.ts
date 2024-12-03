@@ -11,6 +11,16 @@ import {
 	MessageQueueOptions,
 } from './types'
 
+const readonlyProps = [
+	'url',
+	'bufferedAmount', // bufferedAmount === 0 表明所有消息已发送完毕
+	'binaryType',
+	'extensions',
+	'protocol',
+	'readyState',
+] as const
+const staticProps = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'] as const
+
 function createOptions(url: string, options: IOptions): WebSocketOptions {
 	const defaults: Omit<WebSocketOptions, 'url'> = {
 		protocols: [],
@@ -46,6 +56,11 @@ function createOptions(url: string, options: IOptions): WebSocketOptions {
 }
 
 class WebSocketConnect extends WebSocketConnectEvent {
+	static readonly CONNECTING = WebSocket.CONNECTING
+	static readonly OPEN = WebSocket.OPEN
+	static readonly CLOSING = WebSocket.CLOSING
+	static readonly CLOSED = WebSocket.CLOSED
+
 	ws: WebSocket | null = null
 
 	private _opt: WebSocketOptions
@@ -79,46 +94,22 @@ class WebSocketConnect extends WebSocketConnectEvent {
 
 		// 初始化 WebSocket 连接
 		this._connect()
-	}
-
-	static readonly CONNECTING = WebSocket.CONNECTING
-	static readonly OPEN = WebSocket.OPEN
-	static readonly CLOSING = WebSocket.CLOSING
-	static readonly CLOSED = WebSocket.CLOSED
-	get CONNECTING() {
-		return WebSocketConnect.CONNECTING
-	}
-	get OPEN() {
-		return WebSocketConnect.OPEN
-	}
-	get CLOSING() {
-		return WebSocketConnect.CLOSING
-	}
-	get CLOSED() {
-		return WebSocketConnect.CLOSED
-	}
-
-	get url() {
-		return this.ws!.url
-	}
-	get bufferedAmount() {
-		// bufferedAmount === 0 表明所有消息已发送完毕
-		return this.ws!.bufferedAmount
-	}
-	get binaryType() {
-		return this.ws!.binaryType
-	}
-	set binaryType(value: BinaryType) {
-		this.ws!.binaryType = value
-	}
-	get extensions() {
-		return this.ws!.extensions
-	}
-	get protocol() {
-		return this.ws!.protocol
-	}
-	get readyState() {
-		return this.ws!.readyState
+		// 初始化 WebSocket 属性
+		readonlyProps.forEach((key) => {
+			Object.defineProperty(WebSocketConnect.prototype, key, {
+				get() {
+					return this.ws![key]
+				},
+			})
+		})
+		// 初始化 WebSocket 静态属性
+		staticProps.forEach((key) => {
+			Object.defineProperty(WebSocketConnect.prototype, key, {
+				get() {
+					return WebSocketConnect[key]
+				},
+			})
+		})
 	}
 
 	private _connect() {
@@ -126,14 +117,17 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		const ws = new WebSocket(this._opt.url, this._opt.protocols)
 
 		ws.onclose = (event) => {
-			// 自动重连处理 (非主动关闭自动重连)
+			// ping: 断开连接时停止心跳检测
+			if (ping.enabled && this._p) this._p.stop()
+
+			// reconnect: 自动重连处理 (非主动关闭自动重连)
 			const _shouldReconnect =
 				reconnect.enabled && !this._manualClose
 					? typeof reconnect.shouldReconnect === 'function'
 						? reconnect.shouldReconnect(event, this)
 						: true
 					: false
-			if (_shouldReconnect) {
+			if (_shouldReconnect && this._r) {
 				this._r.start(
 					(attempt) => {
 						this._connect()
@@ -151,26 +145,24 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		}
 
 		ws.onmessage = (event) => {
-			//重置心跳检测
-			if (ping.enabled) {
-				this._p.reset()
-			}
+			// ping: 重置心跳检测
+			if (ping.enabled) this._p.reset()
 
 			this.dispatchEvent(createEvent('message', event))
 		}
 
 		ws.onopen = (event) => {
-			// 重置自动重连次数
+			// reconnect: 重置自动重连数据
 			if (reconnect.enabled) {
 				this._r.reset()
 			}
 
-			// 处理排队消息
+			// messageQueue: 处理排队消息
 			if (messageQueue.enabled) {
 				this._q.process((d) => this.send(d))
 			}
 
-			// 启动心跳监测 (无消息队列时)
+			// ping: 启动心跳监测 (无消息队列时)
 			// if (ping.enabled && ws.bufferedAmount === 0) {
 			if (ping.enabled) this._p.start()
 
@@ -195,7 +187,7 @@ class WebSocketConnect extends WebSocketConnectEvent {
 		if (ws && ws.readyState === WebSocket.OPEN) {
 			ws.send(data)
 		} else {
-			// 保存待发送消息
+			// messageQueue: 保存待发送消息
 			if (this._opt.messageQueue.enabled) {
 				this._q.add(data)
 			}

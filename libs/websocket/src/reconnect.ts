@@ -2,8 +2,8 @@ import { ReconnectOptions } from './types'
 
 /**
  * 重连管理器
- * 1. `onclose` 中开始重连;
- * 2. `onopen` 中重置重连数据;
+1. `onclose` 中开始重连;
+ * 2. `onopen` 中重置重连数据; * 
  */
 export class ReconnectManager {
 	private attempt: number = 0
