@@ -6,6 +6,11 @@
 	"buildOptions": {
 		"input": "index.js"
 	},
+	"publishConfig": {
+		"access": "public",
+		"registry": "https://registry.npmjs.org"
+	},
+	"sideEffects": false,
 	"keywords": [],
 	"author": "",
 	"license": "MIT"
