@@ -131,7 +131,7 @@ WebSocket connection protocol.
 WebSocket connection options.
 
 ```typescript
-interface WebSocketConnectOptions {
+interface IOptions {
 	// Reconnection configuration
 	reconnect?:
 		| boolean

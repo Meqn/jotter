@@ -54,16 +54,7 @@
 
 - https://github.com/pladaria/reconnecting-websocket/
 - https://github.com/joewalnes/reconnecting-websocket
-
+- https://github.com/zimv/websocket-heartbeat-js
+- https://github.com/jaywcjlove/websocket/
 - https://github.com/appuri/robust-websocket/
 - https://github.com/theturtle32/WebSocket-Node/
-
-
-
-参考：
-// https://github.com/pladaria/reconnecting-websocket/ ⭐️⭐️⭐️⭐️
-// https://github.com/joewalnes/reconnecting-websocket  ⭐️⭐️⭐️
-// https://github.com/lukeed/sockette/  ⭐️⭐️⭐️
-// https://github.com/appuri/robust-websocket/
-// https://github.com/jaywcjlove/websocket/
-// https://github.com/zimv/websocket-heartbeat-js
