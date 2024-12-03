@@ -97,11 +97,19 @@ describe('WebSocketConnect', () => {
 			wsConnect = new WebSocketConnect('ws://example.com', {
 				reconnect: {
 					enabled: true,
-					maxAttempts: 5,
 					delay: 1000,
+					maxAttempts: 20,
 				},
 			})
-			expect(wsConnect['_opt'].reconnect.maxAttempts).toBe(5)
+			expect(wsConnect['_opt'].reconnect.maxAttempts).toBe(20)
+			expect(wsConnect['_opt'].reconnect.delay).toBe(1000)
+		})
+
+		it('should handle default reconnect options', () => {
+			wsConnect = new WebSocketConnect('ws://example.com', { reconnect: true })
+
+			expect(wsConnect['_opt'].reconnect.maxAttempts).toBe(10)
+			expect(wsConnect['_opt'].reconnect.enabled).toBe(true)
 		})
 
 		it('should handle custom ping options', () => {
@@ -113,6 +121,7 @@ describe('WebSocketConnect', () => {
 				},
 			})
 			expect(wsConnect['_opt'].ping.interval).toBe(5000)
+			expect(wsConnect['_opt'].ping.message).toBe('custom ping')
 		})
 
 		it('should handle message queue options', () => {
@@ -148,7 +157,7 @@ describe('WebSocketConnect', () => {
 			wsConnect.send('queued message')
 
 			// Check that message was added to queue
-			expect(wsConnect['_q'].add('queued message')).toBeTruthy()
+			expect(wsConnect['_q'].queue.includes('queued message')).toBeTruthy()
 		})
 
 		it('should close connection', () => {

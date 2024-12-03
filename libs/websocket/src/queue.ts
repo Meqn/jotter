@@ -18,7 +18,6 @@ export class QueueManager {
 				this.queue.push(data)
 			}
 		}
-		return false
 	}
 
 	process(send: (data: any) => any) {
