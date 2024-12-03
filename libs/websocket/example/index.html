@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>websocket</title>
+	</head>
+	<body>
+		<dl>
+			<dt>发送</dt>
+			<dd><input id="message" type="text" /></dd>
+			<dt>接收</dt>
+			<dd><textarea id="receive" readonly="readonly" rows="10" cols="50"></textarea></dd>
+			<dt>断开</dt>
+			<dd><input id="disconnect" type="button" value="断开" /></dd>
+		</dl>
+
+		<script type="module">
+			import WebSocketConnect from '../dist/index.js'
+			const $result = document.querySelector('#receive')
+
+			const ws = new WebSocketConnect('ws://localhost:30001')
+			ws.addEventListener('message', (e) => {
+				$result.value += e.data + '\n'
+			})
+			ws.onclose = () => {
+				$result.value += '连接已断开\n'
+			}
+			ws.onerror = (e) => {
+				$result.value += '连接发生错误\n'
+			}
+			ws.onopen = () => {
+				$result.value += '连接已建立\n'
+			}
+			ws.onreconnect = (e) => {
+				$result.value += `正在重连 (${e.detail.attempt})\n`
+			}
+			ws.onreconnecterror = (e) => {
+				$result.value += `重连结束 (${e.detail.attempt})\n`
+			}
+
+			document.querySelector('#disconnect').onclick = () => {
+				ws.close()
+			}
+			document.querySelector('#message').onkeydown = (e) => {
+				if (e.keyCode === 13) {
+					ws.send(e.target.value)
+					e.target.value = ''
+				}
+			}
+		</script>
+	</body>
+</html>
