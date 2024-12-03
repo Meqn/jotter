@@ -1,5 +1,13 @@
 import { WebSocketConnectEventMap } from './types'
-const eventTypes = ['close', 'error', 'message', 'open', 'reconnect', 'reconnectend'] as const
+const eventTypes = [
+	'close',
+	'error',
+	'message',
+	'open',
+	'connecting',
+	'reconnect',
+	'reconnectend',
+] as const
 
 export class WebSocketConnectEvent {
 	ws: WebSocket | null = null
@@ -9,6 +17,7 @@ export class WebSocketConnectEvent {
 	onerror: ((ev: WebSocketConnectEventMap['error']) => any) | null = null
 	onmessage: ((ev: WebSocketConnectEventMap['message']) => any) | null = null
 	onopen: ((ev: WebSocketConnectEventMap['open']) => any) | null = null
+	onconnecting: ((ev: WebSocketConnectEventMap['connecting']) => any) | null = null
 	onreconnect: ((ev: WebSocketConnectEventMap['reconnect']) => any) | null = null
 	onreconnectend: ((ev: WebSocketConnectEventMap['reconnectend']) => any) | null = null
 

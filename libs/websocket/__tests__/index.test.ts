@@ -45,7 +45,7 @@ class MockWebSocket {
 
 describe('WebSocketConnect', () => {
 	let wsConnect: WebSocketConnect
-	let originalWebSocket: any
+	let originalWebSocket: WebSocket
 
 	beforeEach(() => {
 		// Store original WebSocket
@@ -58,6 +58,7 @@ describe('WebSocketConnect', () => {
 		// Clean up WebSocket connection if exists
 		if (wsConnect) {
 			wsConnect.close()
+			wsConnect = null
 		}
 		// Restore original WebSocket
 		global.WebSocket = originalWebSocket
@@ -67,6 +68,7 @@ describe('WebSocketConnect', () => {
 		it('should create a WebSocket connection with default options', () => {
 			wsConnect = new WebSocketConnect('ws://example.com')
 			expect(wsConnect).toBeDefined()
+			expect(wsConnect.url).toBe('ws://example.com')
 			expect(wsConnect.readyState).toBe(MockWebSocket.CONNECTING)
 		})
 
@@ -178,14 +180,18 @@ describe('WebSocketConnect', () => {
 		})
 
 		it('should dispatch events', () => {
-			const mockListener = jest.fn()
-			wsConnect.addEventListener('open', mockListener)
+			const mockOpenListener = jest.fn()
+			const mockConnectListener = jest.fn()
+			wsConnect.addEventListener('open', mockOpenListener)
+			wsConnect.onconnecting = mockConnectListener
 
 			// Simulate open event
 			const openEvent = new Event('open')
 			wsConnect.dispatchEvent(openEvent)
+			wsConnect.dispatchEvent(new Event('connecting'))
 
-			expect(mockListener).toHaveBeenCalled()
+			expect(mockOpenListener).toHaveBeenCalled()
+			expect(mockConnectListener).toHaveBeenCalled()
 		})
 
 		it('should handle reconnection', () => {

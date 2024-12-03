@@ -206,6 +206,7 @@ Message queue configuration. (Accumulated unsent-messages are sent when the conn
 - `close`: Connection closed
 - `message`: Message received
 - `error`: Connection error
+- `connecting`: Connection is being established
 - `reconnect`: Reconnection attempt
 - `reconnectend`: Reconnection attempts ended
 

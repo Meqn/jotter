@@ -127,6 +127,7 @@ export interface CustomEventOptions<T = any> extends EventOptions {
 
 // websocket 事件接口
 export interface WebSocketConnectEventMap extends WebSocketEventMap {
+	connecting: Event
 	reconnect: Event
 	reconnectend: Event
 }

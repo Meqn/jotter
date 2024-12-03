@@ -11,16 +11,6 @@ import {
 	MessageQueueOptions,
 } from './types'
 
-const readonlyProps = [
-	'url',
-	'bufferedAmount', // bufferedAmount === 0 表明所有消息已发送完毕
-	'binaryType',
-	'extensions',
-	'protocol',
-	'readyState',
-] as const
-const staticProps = ['CONNECTING', 'OPEN', 'CLOSING', 'CLOSED'] as const
-
 function createOptions(url: string, options: IOptions): WebSocketOptions {
 	const defaults: Omit<WebSocketOptions, 'url'> = {
 		protocols: [],
@@ -56,11 +46,6 @@ function createOptions(url: string, options: IOptions): WebSocketOptions {
 }
 
 class WebSocketConnect extends WebSocketConnectEvent {
-	static readonly CONNECTING = WebSocket.CONNECTING
-	static readonly OPEN = WebSocket.OPEN
-	static readonly CLOSING = WebSocket.CLOSING
-	static readonly CLOSED = WebSocket.CLOSED
-
 	ws: WebSocket | null = null
 
 	private _opt: WebSocketOptions
@@ -94,27 +79,12 @@ class WebSocketConnect extends WebSocketConnectEvent {
 
 		// 初始化 WebSocket 连接
 		this._connect()
-		// 初始化 WebSocket 属性
-		readonlyProps.forEach((key) => {
-			Object.defineProperty(WebSocketConnect.prototype, key, {
-				get() {
-					return this.ws![key]
-				},
-			})
-		})
-		// 初始化 WebSocket 静态属性
-		staticProps.forEach((key) => {
-			Object.defineProperty(WebSocketConnect.prototype, key, {
-				get() {
-					return WebSocketConnect[key]
-				},
-			})
-		})
 	}
 
 	private _connect() {
 		const { reconnect, ping, messageQueue } = this._opt
 		const ws = new WebSocket(this._opt.url, this._opt.protocols)
+		this.dispatchEvent(createEvent('connecting', { target: this.ws } as Event))
 
 		ws.onclose = (event) => {
 			// ping: 断开连接时停止心跳检测
@@ -228,6 +198,47 @@ class WebSocketConnect extends WebSocketConnectEvent {
 			this.ws.close(code, reason)
 			this.ws = null
 		}
+	}
+
+	// 绑定 WebSocket 静态属性 和 GET属性
+	static readonly CONNECTING = WebSocket.CONNECTING
+	static readonly OPEN = WebSocket.OPEN
+	static readonly CLOSING = WebSocket.CLOSING
+	static readonly CLOSED = WebSocket.CLOSED
+	get CONNECTING() {
+		return WebSocketConnect.CONNECTING
+	}
+	get OPEN() {
+		return WebSocketConnect.OPEN
+	}
+	get CLOSING() {
+		return WebSocketConnect.CLOSING
+	}
+	get CLOSED() {
+		return WebSocketConnect.CLOSED
+	}
+
+	get url() {
+		return this.ws!.url
+	}
+	get bufferedAmount() {
+		// bufferedAmount === 0 表明所有消息已发送完毕
+		return this.ws!.bufferedAmount
+	}
+	get binaryType() {
+		return this.ws!.binaryType
+	}
+	set binaryType(value: BinaryType) {
+		this.ws!.binaryType = value
+	}
+	get extensions() {
+		return this.ws!.extensions
+	}
+	get protocol() {
+		return this.ws!.protocol
+	}
+	get readyState() {
+		return this.ws!.readyState
 	}
 }
 
