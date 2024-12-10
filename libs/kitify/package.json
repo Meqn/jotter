@@ -1,17 +1,54 @@
 {
 	"name": "kitify",
-	"version": "0.0.1",
-	"description": "kitify",
-	"main": "index.js",
-	"buildOptions": {
-		"input": "index.js"
+	"version": "0.0.7",
+	"description": "kitify is a JavaScript utility library that provides a whole mess of useful helper functions and supports modularity.",
+	"type": "module",
+	"main": "dist/index.js",
+	"unpkg": "dist/index.min.js",
+	"jsdelivr": "dist/index.min.js",
+	"types": "dist/index.d.ts",
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js",
+			"module": "./dist/index.js",
+			"require": "./dist/index.cjs"
+		},
+		"./*": "./dist/*"
 	},
+	"files": [
+		"dist"
+	],
+	"buildOptions": {
+		"input": "index.js",
+		"name": "kitify",
+		"target": [
+			"es2015",
+			"es5"
+		]
+	},
+	"keywords": [
+		"kitify",
+		"kit",
+		"JavaScript kit",
+		"utility",
+		"functions",
+		"lodash"
+	],
 	"publishConfig": {
 		"access": "public",
 		"registry": "https://registry.npmjs.org"
 	},
 	"sideEffects": false,
-	"keywords": [],
-	"author": "",
-	"license": "MIT"
+	"homepage": "https://github.com/Marinerer/jotter/tree/main/libs/kitify",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Marinerer/jotter.git",
+		"directory": "libs/kitify"
+	},
+	"author": "Mariner <mengqing723@gmail.com>",
+	"license": "MIT",
+	"bugs": {
+		"url": "https://github.com/Marinerer/jotter/issues"
+	}
 }
