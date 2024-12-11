@@ -18,9 +18,10 @@ const args = minimist(process.argv.slice(2))
 const watchMode = args.watch
 const PROD = !args.watch
 
-async function readLibConfig(libPath) {
+async function readLibConfig(libPath, type) {
 	try {
-		const { default: result } = await import(path.join(libPath, BUILD_LIB_CONFIG_FILE))
+		const _path = path.join(libPath, BUILD_LIB_CONFIG_FILE + (type === 'module' ? '.js' : '.mjs'))
+		const { default: result } = await import(_path)
 		if (typeof result === 'function') {
 			return await Promise.resolve().then(result)
 		} else {
@@ -60,8 +61,8 @@ function generateConfig(input, config = {}, pkg, cli = {}) {
 
 async function getLibConfig(libName, cli = {}) {
 	const libPath = getLibPath(libName)
-	const _config = await readLibConfig(libPath)
 	const libPkg = await readPackage(libPath)
+	const _config = await readLibConfig(libPath, libPkg.type)
 
 	const userConfig = _config || libPkg[BUILD_LIB_CONFIG_KEY] || {}
 	const libInput = cli.input || userConfig.input || './src/index.ts'
