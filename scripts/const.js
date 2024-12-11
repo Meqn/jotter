@@ -12,7 +12,7 @@ export const BUILD_MODULES = ['libs/*/package.json'] // 所有的构建模块
 export const BUILD_BROWSERSLIST = '> 0.25%, not dead'
 export const BUILD_TS_TARGET = ['es2018', 'es2015']
 export const BUILD_FORMATS = ['esm', 'cjs', 'umd']
-export const BUILD_LIB_CONFIG_FILE = 'config.js' // 构建配置文件
+export const BUILD_LIB_CONFIG_FILE = 'config' // 构建配置文件
 export const BUILD_LIB_CONFIG_KEY = 'buildOptions' // package.json 中的构建配置
 
 /**
