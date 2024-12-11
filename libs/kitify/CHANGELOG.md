@@ -1,5 +1,11 @@
 # kitify
 
+## 0.1.0
+
+### Minor Changes 🚀
+
+- feat: Add type checks and utility functions ([6dbb444](https://github.com/Marinerer/jotter/commit/6dbb4443085dbbe2bd03f1d555bc09b592c1ccb9))
+
 ## 0.0.1
 
 ### Patch Changes 🌟
