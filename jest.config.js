@@ -4,6 +4,7 @@ export default {
 	testEnvironment: 'jsdom', // 'node'
 	roots: ['<rootDir>'],
 	setupFilesAfterEnv: ['@testing-library/jest-dom'],
+	setupFiles: ['jest-canvas-mock'],
 	testMatch: ['**/__tests__/**/*.[jt]s', '**/?(*.)+(spec|test).[jt]s'],
 	transform: {
 		'^.+\\.tsx?$': ['ts-jest', { useESM: true }],
@@ -14,7 +15,7 @@ export default {
 		'^@lib/(.*)$': '<rootDir>/libs/$1',
 	},
 	moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx', 'json'],
-	// collectCoverage: true,
+	// collectCoverage: true, // 是否显示覆盖率报告
 	coverageDirectory: 'coverage',
 	coverageReporters: ['text', 'lcov'],
 }
