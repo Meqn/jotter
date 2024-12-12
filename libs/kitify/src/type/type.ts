@@ -1,11 +1,4 @@
-export function isType(value: any, type?: string): string | boolean {
-	const valType = Object.prototype.toString.call(value).slice(8, -1).toLowerCase()
-	if (type && typeof type === 'string') {
-		return valType === type.toLowerCase()
-	}
-	return valType
-}
-
+import isType from './isType'
 export const isString = (value: any) => typeof value === 'string'
 export const isNumber = (value: any) => typeof value === 'number'
 export const isBoolean = (value: any) => typeof value === 'boolean'
@@ -34,3 +27,5 @@ export const isEmpty = (value: any) => {
 }
 
 export const isInvalid = (value: any) => isNil(value) || Number.isNaN(value)
+
+export { isType }
