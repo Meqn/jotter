@@ -1,5 +1,11 @@
 # kitify
 
+## 0.1.1
+
+### Patch Changes 🌟
+
+- perf: Refactor type exports and add isType utility (#8) ([aedd6cc](https://github.com/Marinerer/jotter/commit/aedd6ccc7b48ecbee2263f877208877a3090546f))
+
 ## 0.1.0
 
 ### Minor Changes 🚀
