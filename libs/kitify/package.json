@@ -20,13 +20,19 @@
 			"module": "./dist/type.mjs",
 			"require": "./dist/type.js"
 		},
+		"./isType": {
+			"types": "./dist/isType.d.ts",
+			"import": "./dist/isType.mjs",
+			"module": "./dist/isType.mjs",
+			"require": "./dist/isType.js"
+		},
 		"./*": "./dist/*"
 	},
 	"files": [
 		"dist"
 	],
 	"buildOptions": {
-		"input": "index.js",
+		"input": "src/index.ts",
 		"name": "kitify",
 		"target": [
 			"es2015",
